@@ -969,16 +969,23 @@ function setStation(i, autoplay){
   }
 
   btnPlay.addEventListener('click', ()=>{
-    if(audio.paused){
+  if(audio.paused){
+    const s = STATIONS[stationIndex];
+
+    if(s.url.includes('.m3u8')){
+      setStation(stationIndex, true);
+    } else {
       if(!audio.src) setStation(stationIndex, false);
       tryPlay();
-    } else {
-      audio.pause();
-      playerEl.classList.remove('playing');
-      btnPlay.textContent = '▶';
-      statusEl.textContent = 'pausado';
     }
-  });
+  } else {
+    audio.pause();
+    playerEl.classList.remove('playing');
+    btnPlay.textContent = '▶';
+    statusEl.textContent = 'pausado';
+  }
+});
+ 
 
   audio.addEventListener('waiting', ()=>{ statusEl.textContent = 'carregando...'; });
   audio.addEventListener('playing', ()=>{ statusEl.textContent = 'tocando agora'; playerEl.classList.add('playing'); btnPlay.textContent='⏸'; });
