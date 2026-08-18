@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aldeia dos Crentes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky-top:#4FC3F7;
+    --sky-mid:#8FE3FF;
+    --sky-bottom:#EAFBFF;
+    --aero-deep:#0B6E99;
+    --glass-white:rgba(255,255,255,0.55);
+    --glass-border:rgba(255,255,255,0.85);
+    --lime:#B7E877;
+    --lime-deep:#7FB544;
+    --sun:#FFD46B;
+    --holo-pink:#FFB3E6;
+    --holo-purple:#C9B3FF;
+    --ink:#0B3B52;
+    --ink-soft:#3E7089;
+    --msn-blue:#4E8FD6;
+    --msn-blue-dark:#2E6BAE;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Nunito', sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, #ffffff 0%, transparent 60%),
+      linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 45%, var(--sky-bottom) 100%);
+    min-height:100vh;
+    overflow-x:hidden;
+    position:relative;
+  }
+  h1,h2,h3,.display{ font-family:'Baloo 2', sans-serif; }
+  button, input, textarea{ font-family:inherit; }
+
+  /* ---------- Floating bubbles ---------- */
+  .bubble-field{ position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+  .bubble{
+    position:absolute; bottom:-120px; border-radius:50%;
+    background:
+      radial-gradient(circle at 32% 28%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.35) 22%, rgba(255,255,255,0.05) 45%, rgba(255,255,255,0) 60%),
+      radial-gradient(circle at 65% 70%, rgba(201,179,255,0.25), rgba(79,195,247,0.15) 60%, transparent 75%);
+    box-shadow: inset 0 0 20px rgba(255,255,255,0.6), 0 10px 30px rgba(11,110,153,0.15);
+    animation: rise linear infinite; opacity:0.85;
+  }
+  @keyframes rise{
+    0%{ transform:translateY(0) translateX(0); }
+    50%{ transform:translateY(-55vh) translateX(20px); }
+    100%{ transform:translateY(-115vh) translateX(-10px); opacity:0; }
+  }
+
+  /* ---------- Holographic utilities ---------- */
+  .holo-border{
+    position:relative;
+    border-radius:26px;
+  }
+  .holo-border::before{
+    content:"";
+    position:absolute; inset:-2px;
+    border-radius:inherit;
+    padding:2px;
+    background:conic-gradient(from var(--angle,0deg), #FFB3E6, #C9B3FF, #8FE3FF, #B7E877, #FFD46B, #FFB3E6);
+    -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite:xor;
+    mask-composite:exclude;
+    animation: holo-spin 6s linear infinite;
+    opacity:0.9;
+    z-index:0;
+    pointer-events:none;
+  }
+  @property --angle{ syntax:'<angle>'; initial-value:0deg; inherits:false; }
+  @keyframes holo-spin{ from{ --angle:0deg; } to{ --angle:360deg; } }
+
+  .shine{ position:relative; overflow:hidden; }
+  .shine::after{
+    content:"";
+    position:absolute; top:0; left:-150%; width:60%; height:100%;
+    background:linear-gradient(115deg, transparent 0%, rgba(255,255,255,0.55) 45%, transparent 90%);
+    transform:skewX(-18deg);
+    transition:left 0.7s ease;
+  }
+  .shine:hover::after{ left:150%; }
+
+  /* ---------- Layout ---------- */
+  .wrap{ position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:0 20px; }
+
+  /* ---------- MSN-style taskbar / nav ---------- */
+  .msn-bar{
+    margin-top:18px;
+    display:flex; align-items:center; gap:10px;
+    padding:8px 10px;
+    border-radius:16px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.75), rgba(255,255,255,0.4));
+    border:1px solid var(--glass-border);
+    backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.9), 0 8px 24px rgba(11,110,153,0.18);
+    flex-wrap:wrap;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-family:'Baloo 2'; font-weight:800; font-size:1.15rem; color:var(--aero-deep);
+    padding:6px 10px;
+  }
+  .logo-mark{
+    width:34px; height:34px; border-radius:50%; flex-shrink:0;
+    background:radial-gradient(circle at 32% 28%, #ffffff 0%, #f0d9ff 20%, #C9B3FF 45%, var(--aero-deep) 100%);
+    box-shadow: inset -4px -6px 10px rgba(11,110,153,0.35), 0 4px 10px rgba(11,110,153,0.3);
+  }
+  .tabs{ display:flex; gap:6px; flex-wrap:wrap; margin-left:auto; }
+  .tab-btn{
+    border:none; cursor:pointer;
+    padding:9px 16px; border-radius:12px;
+    font-weight:800; font-size:0.85rem; color:var(--ink-soft);
+    background:rgba(255,255,255,0.4);
+    transition:all 0.2s ease;
+  }
+  .tab-btn:hover{ background:rgba(255,255,255,0.75); color:var(--aero-deep); }
+  .tab-btn.active{
+    color:#fff;
+    background:linear-gradient(180deg, var(--msn-blue), var(--msn-blue-dark));
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.6), 0 4px 10px rgba(30,90,150,0.35);
+  }
+
+  /* ---------- MSN window panel ---------- */
+  .msn-window{
+    border-radius:18px;
+    overflow:hidden;
+    background:var(--glass-white);
+    border:1px solid var(--glass-border);
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.9), 0 16px 34px rgba(11,110,153,0.16);
+    margin-bottom:26px;
+  }
+  .msn-titlebar{
+    display:flex; align-items:center; gap:10px;
+    padding:10px 14px;
+    background:linear-gradient(180deg, #7FC4F5, var(--msn-blue-dark));
+    color:#fff;
+    font-family:'Baloo 2'; font-weight:700; font-size:0.95rem;
+    text-shadow:0 1px 2px rgba(0,40,70,0.4);
+  }
+  .titlebar-dots{ display:flex; gap:6px; margin-left:auto; }
+  .titlebar-dots span{
+    width:11px; height:11px; border-radius:50%;
+    background:rgba(255,255,255,0.5);
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.7);
+  }
+  .titlebar-dots span:nth-child(1){ background:#FFB3B3; }
+  .titlebar-dots span:nth-child(2){ background:#FFE29A; }
+  .titlebar-dots span:nth-child(3){ background:#B7E877; }
+  .msn-body{ padding:22px; }
+  .status-dot{
+    width:9px; height:9px; border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, #d4ffb0, var(--lime-deep));
+    box-shadow:0 0 8px var(--lime);
+    display:inline-block;
+  }
+
+  /* ---------- Glossy button ---------- */
+  .btn-glossy{
+    position:relative; display:inline-flex; align-items:center; gap:8px;
+    padding:12px 24px; border-radius:999px; border:none; cursor:pointer;
+    font-family:'Baloo 2'; font-weight:700; font-size:0.95rem; color:#fff;
+    background:linear-gradient(180deg, #8FE99A 0%, var(--lime) 45%, var(--lime-deep) 100%);
+    box-shadow: inset 0 2px 1px rgba(255,255,255,0.8), inset 0 -6px 10px rgba(65,120,30,0.35),
+      0 8px 18px rgba(60,130,30,0.35), 0 2px 0 var(--lime-deep);
+    text-shadow:0 1px 2px rgba(0,60,0,0.25);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    overflow:hidden;
+  }
+  .btn-glossy::after{
+    content:""; position:absolute; top:6%; left:8%; width:60%; height:38%; border-radius:50%;
+    background:linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0)); filter:blur(1px); pointer-events:none;
+  }
+  .btn-glossy:hover{ transform:translateY(-3px); }
+  .btn-glossy:active{ transform:translateY(1px); }
+  .btn-glossy.blue{
+    background:linear-gradient(180deg, #7FDDFF 0%, var(--sky-top) 45%, var(--aero-deep) 100%);
+    box-shadow: inset 0 2px 1px rgba(255,255,255,0.8), inset 0 -6px 10px rgba(6,70,100,0.4),
+      0 8px 18px rgba(6,70,100,0.3), 0 2px 0 var(--aero-deep);
+    text-shadow:0 1px 2px rgba(0,30,50,0.35);
+  }
+  .btn-glossy.purple{
+    background:linear-gradient(180deg, #E0CFFF 0%, var(--holo-purple) 45%, #8F6FE0 100%);
+    box-shadow: inset 0 2px 1px rgba(255,255,255,0.8), inset 0 -6px 10px rgba(90,50,150,0.35),
+      0 8px 18px rgba(90,50,150,0.3), 0 2px 0 #8F6FE0;
+    text-shadow:0 1px 2px rgba(50,10,90,0.3);
+  }
+  .btn-glossy.small{ padding:8px 16px; font-size:0.8rem; }
+  .btn-glossy:disabled{ opacity:0.55; cursor:not-allowed; transform:none; }
+
+  /* ---------- Hero ---------- */
+  .hero{ display:grid; grid-template-columns:1.1fr 0.9fr; align-items:center; gap:36px; padding:46px 0 30px; }
+  .eyebrow{
+    display:inline-block; padding:6px 16px; border-radius:999px;
+    background:var(--glass-white); border:1px solid var(--glass-border); backdrop-filter:blur(10px);
+    font-weight:800; font-size:0.78rem; color:var(--aero-deep); margin-bottom:16px;
+  }
+  .hero h1{ font-size:2.9rem; line-height:1.08; font-weight:800; color:var(--aero-deep); text-shadow:0 2px 0 rgba(255,255,255,0.6); margin-bottom:16px; }
+  .hero h1 span{
+    background:linear-gradient(90deg, #FFB3E6, #C9B3FF, #8FE3FF, #B7E877);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+    background-size:300% auto; animation: holo-text 5s linear infinite;
+  }
+  @keyframes holo-text{ to{ background-position:300% center; } }
+  .hero p{ font-size:1.08rem; color:var(--ink-soft); max-width:480px; margin-bottom:26px; font-weight:600; }
+  .hero-actions{ display:flex; gap:14px; flex-wrap:wrap; align-items:center; }
+  .online-pill{
+    display:inline-flex; align-items:center; gap:8px; padding:9px 16px; border-radius:999px;
+    background:var(--glass-white); border:1px solid var(--glass-border); backdrop-filter:blur(10px);
+    font-weight:800; font-size:0.85rem; color:var(--ink);
+  }
+  .orb-stage{ position:relative; height:320px; display:flex; align-items:center; justify-content:center; }
+  .orb{
+    width:230px; height:230px; border-radius:50%;
+    background: radial-gradient(circle at 30% 25%, #ffffff 0%, #f5e3ff 15%, #C9B3FF 35%, var(--sky-top) 65%, var(--aero-deep) 100%);
+    box-shadow: inset -20px -30px 50px rgba(6,70,100,0.4), inset 10px 10px 30px rgba(255,255,255,0.6), 0 30px 60px rgba(6,70,100,0.3);
+    position:relative; animation: float 6s ease-in-out infinite;
+  }
+  .orb::before{
+    content:""; position:absolute; top:14%; left:20%; width:35%; height:22%; border-radius:50%;
+    background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0)); filter:blur(2px);
+  }
+  .orb::after{ content:"✞"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:3rem; color:rgba(255,255,255,0.75); text-shadow:0 2px 8px rgba(6,70,100,0.4); }
+  .orb-ring{ position:absolute; width:290px; height:290px; border-radius:50%; border:2px solid rgba(255,255,255,0.6); animation: spin 18s linear infinite; }
+  .orb-ring::before, .orb-ring::after{ content:""; position:absolute; width:14px; height:14px; border-radius:50%; background:radial-gradient(circle at 30% 30%, #fff, var(--holo-purple)); box-shadow:0 0 10px rgba(201,179,255,0.8); }
+  .orb-ring::before{ top:-7px; left:50%; margin-left:-7px; }
+  .orb-ring::after{ bottom:16px; right:0; }
+  @keyframes float{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-16px); } }
+  @keyframes spin{ from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
+
+  .section-head{ margin-bottom:24px; }
+  .section-head h2{ font-size:1.6rem; color:var(--aero-deep); margin-bottom:6px; font-weight:800; }
+  .section-head p{ color:var(--ink-soft); font-weight:600; font-size:0.92rem; }
+
+  /* ---------- Cards ---------- */
+  .grid-3{ display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; }
+  .grid-2{ display:grid; grid-template-columns:repeat(2, 1fr); gap:20px; }
+  .glass-card{
+    padding:22px 20px; border-radius:22px;
+    background:rgba(255,255,255,0.55); border:1px solid var(--glass-border);
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.9), 0 12px 26px rgba(11,110,153,0.12);
+    transition:transform 0.25s ease, box-shadow 0.25s ease;
+    position:relative; overflow:hidden;
+  }
+  .glass-card::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:45%;
+    background:linear-gradient(180deg, rgba(255,255,255,0.5), rgba(255,255,255,0)); pointer-events:none;
+  }
+  .glass-card:hover{ transform:translateY(-6px); }
+  .event-thumb{
+    height:120px; border-radius:14px; margin-bottom:14px;
+    display:flex; align-items:center; justify-content:center; font-size:2.4rem;
+    background:linear-gradient(135deg, #FFD6F0, #D6C9FF, #C7EFFF);
+  }
+  .glass-card h3{ font-size:1.05rem; color:var(--aero-deep); margin-bottom:6px; font-weight:700; }
+  .glass-card .meta{ font-size:0.78rem; color:var(--ink-soft); font-weight:800; margin-bottom:8px; }
+  .glass-card p{ color:var(--ink-soft); font-size:0.9rem; font-weight:600; line-height:1.5; }
+
+  .video-card{
+    display:flex; gap:14px; padding:16px; border-radius:18px;
+    background:rgba(255,255,255,0.5); border:1px solid var(--glass-border); backdrop-filter:blur(10px);
+    align-items:center;
+  }
+  .video-thumb{
+    width:90px; height:64px; border-radius:12px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:#fff;
+    background:linear-gradient(135deg, #FF6B6B, #C9B3FF);
+  }
+  .video-card .name{ font-weight:800; color:var(--aero-deep); font-size:0.95rem; }
+  .video-card .desc{ color:var(--ink-soft); font-size:0.82rem; font-weight:600; }
+
+  /* ---------- Polls ---------- */
+  .poll{ margin-bottom:26px; }
+  .poll:last-child{ margin-bottom:0; }
+  .poll h4{ color:var(--aero-deep); font-size:1rem; margin-bottom:12px; font-weight:800; }
+  .poll-opt{ margin-bottom:10px; }
+  .poll-opt button{
+    width:100%; text-align:left; border:none; cursor:pointer;
+    padding:10px 14px; border-radius:12px;
+    background:rgba(255,255,255,0.55); border:1px solid var(--glass-border);
+    font-weight:700; color:var(--ink); font-size:0.88rem;
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    transition:background 0.2s ease;
+    position:relative; overflow:hidden;
+  }
+  .poll-opt button:hover{ background:rgba(255,255,255,0.85); }
+  .poll-opt .bar{
+    position:absolute; left:0; top:0; bottom:0;
+    background:linear-gradient(90deg, rgba(183,232,119,0.55), rgba(143,227,255,0.4));
+    z-index:0; transition:width 0.4s ease;
+  }
+  .poll-opt .label{ position:relative; z-index:1; }
+  .poll-opt .count{ position:relative; z-index:1; font-size:0.78rem; color:var(--ink-soft); }
+  .poll-opt button.voted{ outline:2px solid var(--lime-deep); }
+
+  /* ---------- Comunidade / perfis ---------- */
+  .login-box{ max-width:420px; }
+  .field{ margin-bottom:14px; }
+  .field label{ display:block; font-weight:800; font-size:0.82rem; color:var(--aero-deep); margin-bottom:6px; }
+  .field input, .field textarea, .field select{
+    width:100%; padding:10px 14px; border-radius:12px; border:1px solid var(--glass-border);
+    background:rgba(255,255,255,0.7); font-weight:700; color:var(--ink); font-size:0.9rem;
+  }
+  .field textarea{ resize:vertical; min-height:70px; font-weight:600; }
+
+  .profile-header{ display:flex; gap:18px; align-items:center; margin-bottom:18px; flex-wrap:wrap; }
+  .avatar-big{
+    width:76px; height:76px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:2.2rem;
+    background:radial-gradient(circle at 30% 25%, #fff, #D6C9FF 40%, var(--aero-deep) 100%);
+    box-shadow: inset -6px -8px 12px rgba(6,70,100,0.3), 0 8px 18px rgba(6,70,100,0.25);
+  }
+  .profile-name{ font-family:'Baloo 2'; font-weight:800; font-size:1.3rem; color:var(--aero-deep); }
+  .profile-tag{ color:var(--ink-soft); font-weight:700; font-size:0.85rem; }
+  .profile-facts{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+  .fact-pill{
+    padding:6px 12px; border-radius:999px; background:rgba(255,255,255,0.6);
+    border:1px solid var(--glass-border); font-weight:700; font-size:0.78rem; color:var(--ink);
+  }
+
+  .member-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; margin-top:8px; }
+  .member-chip{
+    display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:14px;
+    background:rgba(255,255,255,0.5); border:1px solid var(--glass-border); cursor:pointer;
+    transition:background 0.2s ease;
+  }
+  .member-chip:hover{ background:rgba(255,255,255,0.85); }
+  .avatar-sm{
+    width:36px; height:36px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:1.1rem;
+    background:radial-gradient(circle at 30% 25%, #fff, #C9E7FF 40%, var(--aero-deep) 100%);
+  }
+  .member-chip .mname{ font-weight:800; font-size:0.85rem; color:var(--ink); }
+  .member-chip .mstatus{ font-size:0.72rem; color:var(--ink-soft); font-weight:700; }
+
+  .recado{
+    padding:12px 14px; border-radius:14px; background:rgba(255,255,255,0.5);
+    border:1px solid var(--glass-border); margin-bottom:10px;
+  }
+  .recado .from{ font-weight:800; color:var(--aero-deep); font-size:0.82rem; }
+  .recado .text{ font-weight:600; color:var(--ink); font-size:0.88rem; margin-top:2px; }
+
+  .divider{ height:1px; background:linear-gradient(90deg, transparent, var(--glass-border), transparent); margin:20px 0; }
+
+  .small-note{ font-size:0.78rem; color:var(--ink-soft); font-weight:700; }
+
+  footer{ text-align:center; padding:30px 0 46px; color:var(--ink-soft); font-weight:700; font-size:0.85rem; padding-bottom:110px; }
+
+  /* ---------- Rádio player persistente (estilo Windows Media Player) ---------- */
+  .radio-player{
+    position:fixed; left:20px; bottom:20px; z-index:50;
+    width:280px;
+    border-radius:16px;
+    overflow:hidden;
+    background:rgba(255,255,255,0.6);
+    border:1px solid var(--glass-border);
+    backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.9), 0 16px 34px rgba(11,110,153,0.28);
+    transition:width 0.25s ease, height 0.25s ease;
+  }
+  .radio-player.collapsed .rp-body{ display:none; }
+  .radio-player.collapsed{ width:220px; }
+  .rp-titlebar{
+    display:flex; align-items:center; gap:8px;
+    padding:8px 10px;
+    background:linear-gradient(180deg, #7FC4F5, var(--msn-blue-dark));
+    color:#fff; font-family:'Baloo 2'; font-weight:700; font-size:0.82rem;
+    text-shadow:0 1px 2px rgba(0,40,70,0.4);
+    cursor:pointer; user-select:none;
+  }
+  .rp-titlebar .rp-eq{ display:flex; align-items:flex-end; gap:2px; height:14px; }
+  .rp-titlebar .rp-eq span{
+    width:3px; background:#fff; border-radius:1px;
+    animation: eq 0.9s ease-in-out infinite;
+    opacity:0.9;
+  }
+  .rp-titlebar .rp-eq span:nth-child(1){ height:40%; animation-delay:0s; }
+  .rp-titlebar .rp-eq span:nth-child(2){ height:90%; animation-delay:0.15s; }
+  .rp-titlebar .rp-eq span:nth-child(3){ height:60%; animation-delay:0.3s; }
+  .rp-titlebar .rp-eq span:nth-child(4){ height:100%; animation-delay:0.45s; }
+  .radio-player:not(.playing) .rp-eq span{ animation-play-state:paused; height:20% !important; }
+  @keyframes eq{ 0%,100%{ transform:scaleY(0.4); } 50%{ transform:scaleY(1); } }
+  .rp-min{ margin-left:auto; background:rgba(255,255,255,0.25); border:none; color:#fff; width:20px; height:20px; border-radius:6px; cursor:pointer; font-size:0.75rem; line-height:1; }
+  .rp-body{ padding:14px; }
+  .rp-now{ font-weight:800; color:var(--aero-deep); font-size:0.85rem; margin-bottom:2px; }
+  .rp-station-name{ font-weight:700; color:var(--ink-soft); font-size:0.75rem; margin-bottom:10px; }
+  .rp-controls{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .rp-play{
+    width:42px; height:42px; border-radius:50%; border:none; cursor:pointer; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:1.1rem; color:#fff;
+    background:linear-gradient(180deg, #8FE99A 0%, var(--lime) 45%, var(--lime-deep) 100%);
+    box-shadow: inset 0 2px 1px rgba(255,255,255,0.8), inset 0 -6px 8px rgba(65,120,30,0.35), 0 6px 14px rgba(60,130,30,0.35);
+  }
+  .rp-volume{ flex:1; display:flex; align-items:center; gap:6px; }
+  .rp-volume input[type=range]{ flex:1; accent-color: var(--aero-deep); }
+  .rp-stations{ display:flex; flex-direction:column; gap:6px; }
+  .rp-station-btn{
+    text-align:left; border:none; cursor:pointer; padding:7px 10px; border-radius:10px;
+    background:rgba(255,255,255,0.5); font-weight:700; font-size:0.75rem; color:var(--ink);
+  }
+  .rp-station-btn.active{ background:linear-gradient(180deg, var(--msn-blue), var(--msn-blue-dark)); color:#fff; }
+  .rp-status{ font-size:0.7rem; color:var(--ink-soft); font-weight:700; margin-top:8px; }
+  @media (max-width:860px){
+    .radio-player{ left:12px; right:12px; bottom:12px; width:auto; }
+    .radio-player.collapsed{ width:auto; }
+  }
+
+  @media (max-width:860px){
+    .hero{ grid-template-columns:1fr; padding-top:30px; }
+    .hero h1{ font-size:2.1rem; }
+    .orb-stage{ height:220px; }
+    .orb{ width:150px; height:150px; }
+    .orb-ring{ width:190px; height:190px; }
+    .grid-3, .grid-2, .member-grid{ grid-template-columns:1fr; }
+    .tabs{ margin-left:0; width:100%; justify-content:flex-start; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+  }
+  :focus-visible{ outline:3px solid var(--aero-deep); outline-offset:3px; }
+</style>
+</head>
+<body>
+
+<div class="bubble-field" aria-hidden="true" id="bubbleField"></div>
+
+<div class="wrap">
+
+  <nav class="msn-bar">
+    <div class="brand"><span class="logo-mark"></span> Aldeia dos Crentes</div>
+    <div class="tabs" id="tabs">
+      <button class="tab-btn active" data-tab="inicio">🏠 Início</button>
+      <button class="tab-btn" data-tab="eventos">🎉 Eventos</button>
+      <button class="tab-btn" data-tab="redes">🎥 Redes</button>
+      <button class="tab-btn" data-tab="forum">📊 Fórum</button>
+      <button class="tab-btn" data-tab="comunidade">👥 Comunidade</button>
+    </div>
+  </nav>
+
+  <div id="view"></div>
+
+  <footer>Aldeia dos Crentes © 2026 — fé, anime e boas amizades ✞</footer>
+</div>
+
+<div class="radio-player" id="radioPlayer">
+  <div class="rp-titlebar" id="rpTitlebar">
+    <div class="rp-eq"><span></span><span></span><span></span><span></span></div>
+    <span>Rádio da Aldeia</span>
+    <button class="rp-min" id="rpMin" aria-label="Minimizar player">–</button>
+  </div>
+  <div class="rp-body">
+    <div class="rp-now">🎵 Rádio ao vivo</div>
+    <div class="rp-station-name" id="rpStationName">carregando estação...</div>
+    <div class="rp-controls">
+      <button class="rp-play" id="rpPlay" aria-label="Tocar ou pausar">▶</button>
+      <div class="rp-volume">
+        <span>🔊</span>
+        <input type="range" id="rpVolume" min="0" max="100" value="70">
+      </div>
+    </div>
+    <div class="rp-stations" id="rpStations"></div>
+    <div class="rp-status" id="rpStatus">clique em play pra começar</div>
+  </div>
+</div>
+<audio id="rpAudio" preload="none"></audio>
+
+<script>
+/* ============ Bolhas de fundo ============ */
+(function(){
+  const field = document.getElementById('bubbleField');
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const bubbleCount = prefersReducedMotion ? 0 : 14;
+  for(let i=0;i<bubbleCount;i++){
+    const b = document.createElement('div');
+    b.className='bubble';
+    const size = 18 + Math.random()*60;
+    b.style.width=size+'px'; b.style.height=size+'px';
+    b.style.left=Math.random()*100+'vw';
+    b.style.animationDuration=(10+Math.random()*14)+'s';
+    b.style.animationDelay=(Math.random()*14)+'s';
+    field.appendChild(b);
+  }
+})();
+
+/* ============ Dados fixos (conteúdo do site) ============ */
+const EVENTS = [
+  {emoji:'🙏', name:'Vigília Gospel & Games', date:'Mar/2026', desc:'Uma noite inteira de louvor, oração e sessões coletivas de jogo até o sol nascer.'},
+  {emoji:'🎌', name:'Maratona Anime Cristão', date:'Jan/2026', desc:'Assistimos e debatemos mensagens de fé escondidas em animes queridos da galera.'},
+  {emoji:'📖', name:'Devocional em Voz — Semana da Fé', date:'Dez/2025', desc:'Sete dias seguidos de devocional em call aberta, com reflexão e testemunhos.'},
+  {emoji:'🎤', name:'Live de Louvor Acústico', date:'Nov/2025', desc:'Membros da comunidade se revezaram no microfone tocando louvores autorais.'},
+  {emoji:'🖍️', name:'Concurso de Fanart Bíblico', date:'Out/2025', desc:'Desenhos inspirados em passagens bíblicas com estética de anime, votados pela galera.'},
+  {emoji:'🕹️', name:'Torneio Beneficente', date:'Set/2025', desc:'Campeonato de jogos com inscrição revertida para uma ação social local.'}
+];
+
+const VIDEOS = [
+  {emoji:'🎬', name:'Entrevista: fé e cultura otaku', desc:'Bate-papo no canal do YouTube sobre como conciliar anime e vida cristã.'},
+  {emoji:'📻', name:'Podcast Aldeia — Ep. 12', desc:'Discussão sobre comunidade, solidão geek e amizades verdadeiras.'},
+  {emoji:'✂️', name:'Bastidores do encontro presencial', desc:'Vlog mostrando como foi o primeiro meetup da galera fora do Discord.'},
+  {emoji:'📢', name:'Como começamos a Aldeia', desc:'A história por trás da criação do servidor, contada pelos fundadores.'}
+];
+
+const POLLS = {
+  biblia: {
+    title:'📖 Livro da Bíblia favorito',
+    options:[['salmos','Salmos'],['joao','João'],['genesis','Gênesis'],['provérbios','Provérbios'],['apocalipse','Apocalipse']]
+  },
+  louvor: {
+    title:'🎵 Estilo de louvor favorito',
+    options:[['worship','Worship contemplativo'],['gospel-pop','Gospel pop'],['hinos','Hinos tradicionais'],['rock-gospel','Rock gospel'],['lofi','Lofi de oração']]
+  },
+  anime: {
+    title:'🎌 Anime favorito da galera',
+    options:[['fma','Fullmetal Alchemist'],['aot','Attack on Titan'],['haikyuu','Haikyuu!!'],['clannad','Clannad'],['sk8','SK8 the Infinity']]
+  }
+};
+
+const AVATARS = ['🙏','✝️','😇','🕊️','📖','🎮','🎌','⭐','🌸','🔥'];
+
+/* ============ Estado ============ */
+let currentTab = 'inicio';
+let currentUser = null; // string username
+let viewingProfile = null; // username sendo visualizado na comunidade
+
+const viewEl = document.getElementById('view');
+
+/* ============ Storage helpers ============ */
+async function getShared(key){
+  try{ const r = await window.storage.get(key, true); return r ? JSON.parse(r.value) : null; }
+  catch(e){ return null; }
+}
+async function setShared(key, value){
+  try{ await window.storage.set(key, JSON.stringify(value), true); return true; }
+  catch(e){ console.error('storage set failed', e); return false; }
+}
+async function getPersonal(key){
+  try{ const r = await window.storage.get(key, false); return r ? r.value : null; }
+  catch(e){ return null; }
+}
+async function setPersonal(key, value){
+  try{ await window.storage.set(key, value, false); return true; }
+  catch(e){ return false; }
+}
+
+/* ============ Navegação ============ */
+document.getElementById('tabs').addEventListener('click', (e)=>{
+  const btn = e.target.closest('.tab-btn');
+  if(!btn) return;
+  currentTab = btn.dataset.tab;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b===btn));
+  render();
+});
+
+/* ============ Render principal ============ */
+async function render(){
+  if(currentTab==='inicio') return renderInicio();
+  if(currentTab==='eventos') return renderEventos();
+  if(currentTab==='redes') return renderRedes();
+  if(currentTab==='forum') return renderForum();
+  if(currentTab==='comunidade') return renderComunidade();
+}
+
+function renderInicio(){
+  viewEl.innerHTML = `
+    <section class="hero">
+      <div>
+        <span class="eyebrow">✞ comunidade cristã geek</span>
+        <h1>Bem-vindo à<br><span>Aldeia dos Crentes</span></h1>
+        <p>Um lugar pra jovens cristãos que também amam anime, manga e cultura japonesa se encontrarem, orarem juntos e fazerem amizades de verdade — mas todo mundo é bem-vindo aqui, geek ou não.</p>
+        <div class="hero-actions">
+          <a href="#" class="btn-glossy shine">💬 Entrar no Discord</a>
+          <span class="online-pill"><span class="status-dot"></span> comunidade ativa todo dia</span>
+        </div>
+      </div>
+      <div class="orb-stage">
+        <div class="orb-ring"></div>
+        <div class="orb"></div>
+      </div>
+    </section>
+
+    <div class="msn-window holo-border">
+      <div class="msn-titlebar">📌 Sobre a Aldeia <div class="titlebar-dots"><span></span><span></span><span></span></div></div>
+      <div class="msn-body grid-3">
+        <div class="glass-card shine">
+          <div class="event-thumb">🙏</div>
+          <h3>Foco no devocional</h3>
+          <p>Momentos fixos de reflexão bíblica e oração, sem pressão, no ritmo da comunidade.</p>
+        </div>
+        <div class="glass-card shine">
+          <div class="event-thumb">🎌</div>
+          <h3>Cultura geek com fé</h3>
+          <p>Anime, mangá e games sem culpa — discutimos tudo isso também sob a ótica da nossa fé.</p>
+        </div>
+        <div class="glass-card shine">
+          <div class="event-thumb">🤝</div>
+          <h3>Amizades de verdade</h3>
+          <p>Aqui ninguém fica de fora. O objetivo é sair da tela e formar amizades que duram.</p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderEventos(){
+  viewEl.innerHTML = `
+    <div class="msn-window holo-border">
+      <div class="msn-titlebar">🎉 Eventos que já rolaram <div class="titlebar-dots"><span></span><span></span><span></span></div></div>
+      <div class="msn-body">
+        <div class="section-head">
+          <h2>Já fizemos bastante coisa por aqui</h2>
+          <p>Um retrospecto do que a Aldeia já viveu junto.</p>
+        </div>
+        <div class="grid-3">
+          ${EVENTS.map(ev=>`
+            <div class="glass-card shine">
+              <div class="event-thumb">${ev.emoji}</div>
+              <div class="meta">${ev.date}</div>
+              <h3>${ev.name}</h3>
+              <p>${ev.desc}</p>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderRedes(){
+  viewEl.innerHTML = `
+    <div class="msn-window holo-border">
+      <div class="msn-titlebar">🎥 Redes & Entrevistas <div class="titlebar-dots"><span></span><span></span><span></span></div></div>
+      <div class="msn-body">
+        <div class="section-head">
+          <h2>Nosso trabalho fora do Discord</h2>
+          <p>Também levamos a Aldeia pro YouTube e outras redes.</p>
+        </div>
+        <div class="grid-2">
+          ${VIDEOS.map(v=>`
+            <div class="video-card shine">
+              <div class="video-thumb">${v.emoji}</div>
+              <div>
+                <div class="name">${v.name}</div>
+                <div class="desc">${v.desc}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        <p class="small-note" style="margin-top:16px;">Coloque aqui os links reais dos vídeos e do canal quando quiser publicar o site.</p>
+      </div>
+    </div>
+  `;
+}
+
+async function renderForum(){
+  viewEl.innerHTML = `
+    <div class="msn-window holo-border">
+      <div class="msn-titlebar">📊 Fórum & Enquetes <div class="titlebar-dots"><span></span><span></span><span></span></div></div>
+      <div class="msn-body">
+        <div class="section-head">
+          <h2>O que a galera prefere?</h2>
+          <p>Vote nas enquetes da comunidade — os resultados ficam salvos de verdade.</p>
+        </div>
+        <div id="pollsContainer">Carregando enquetes...</div>
+      </div>
+    </div>
+  `;
+  const container = document.getElementById('pollsContainer');
+  let html = '';
+  for(const key of Object.keys(POLLS)){
+    const poll = POLLS[key];
+    const votes = (await getShared('poll:'+key)) || {};
+    const total = Object.values(votes).reduce((a,b)=>a+b,0);
+    const myVotes = (await getPersonal('myvotes')) || '{}';
+    const myVotesObj = JSON.parse(myVotes);
+    const myChoice = myVotesObj[key];
+    html += `<div class="poll"><h4>${poll.title}</h4>`;
+    for(const [optKey, optLabel] of poll.options){
+      const count = votes[optKey] || 0;
+      const pct = total>0 ? Math.round((count/total)*100) : 0;
+      const voted = myChoice===optKey;
+      html += `
+        <div class="poll-opt">
+          <button data-poll="${key}" data-opt="${optKey}" class="${voted?'voted':''}">
+            <span class="bar" style="width:${pct}%"></span>
+            <span class="label">${voted?'✓ ':''}${optLabel}</span>
+            <span class="count">${count} voto${count===1?'':'s'} · ${pct}%</span>
+          </button>
+        </div>`;
+    }
+    html += `</div><div class="divider"></div>`;
+  }
+  container.innerHTML = html;
+  container.querySelectorAll('.poll-opt button').forEach(btn=>{
+    btn.addEventListener('click', onVote);
+  });
+}
+
+async function onVote(e){
+  const btn = e.currentTarget;
+  const pollKey = btn.dataset.poll;
+  const optKey = btn.dataset.opt;
+  const myVotesRaw = (await getPersonal('myvotes')) || '{}';
+  const myVotesObj = JSON.parse(myVotesRaw);
+  if(myVotesObj[pollKey]){
+    alert('Você já votou nessa enquete! Seu voto continua contando.');
+    return;
+  }
+  const votes = (await getShared('poll:'+pollKey)) || {};
+  votes[optKey] = (votes[optKey]||0) + 1;
+  await setShared('poll:'+pollKey, votes);
+  myVotesObj[pollKey] = optKey;
+  await setPersonal('myvotes', JSON.stringify(myVotesObj));
+  renderForum();
+}
+
+/* ============ Comunidade (perfis estilo Orkut) ============ */
+async function renderComunidade(){
+  currentUser = await getPersonal('currentUser');
+
+  if(!currentUser){
+    viewEl.innerHTML = `
+      <div class="msn-window holo-border">
+        <div class="msn-titlebar">👥 Comunidade <div class="titlebar-dots"><span></span><span></span><span></span></div></div>
+        <div class="msn-body">
+          <div class="section-head">
+            <h2>Crie sua homepage na Aldeia</h2>
+            <p>Escolha um nome, conte um pouco sobre você e apareça pros outros membros. Tudo o que você preencher fica visível pra qualquer pessoa que visitar o site — nada aqui é privado.</p>
+          </div>
+          <div class="login-box">
+            <div class="field">
+              <label>Como você quer ser chamado?</label>
+              <input type="text" id="loginName" placeholder="ex: joana_luz">
+            </div>
+            <button class="btn-glossy blue shine" id="btnEntrar">✦ Entrar / criar minha homepage</button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.getElementById('btnEntrar').addEventListener('click', async ()=>{
+      const name = document.getElementById('loginName').value.trim();
+      if(!name){ alert('Digita um nome primeiro :)'); return; }
+      const safeName = name.toLowerCase().replace(/[^a-z0-9_]/g,'');
+      if(!safeName){ alert('Usa letras, números ou _'); return; }
+      await setPersonal('currentUser', safeName);
+      const existing = await getShared('member:'+safeName);
+      if(!existing){
+        await setShared('member:'+safeName, {
+          username:safeName, avatar:AVATARS[Math.floor(Math.random()*AVATARS.length)],
+          bio:'Ainda não escreveu nada sobre si.', verse:'', anime:'', friends:[]
+        });
+        const idx = (await getShared('member-index')) || [];
+        if(!idx.includes(safeName)){ idx.push(safeName); await setShared('member-index', idx); }
+      }
+      currentUser = safeName;
+      viewingProfile = safeName;
+      renderComunidade();
+    });
+    return;
+  }
+
+  if(!viewingProfile) viewingProfile = currentUser;
+
+  const profile = await getShared('member:'+viewingProfile);
+  const memberIndex = (await getShared('member-index')) || [];
+  const guestbook = (await getShared('guestbook:'+viewingProfile)) || [];
+  const isOwn = viewingProfile===currentUser;
+  const myProfile = isOwn ? profile : await getShared('member:'+currentUser);
+  const isFriend = myProfile && myProfile.friends && myProfile.friends.includes(viewingProfile);
+
+  let membersHtml = '';
+  for(const uname of memberIndex){
+    if(uname===viewingProfile) continue;
+    const m = await getShared('member:'+uname);
+    if(!m) continue;
+    membersHtml += `
+      <div class="member-chip" data-user="${uname}">
+        <div class="avatar-sm">${m.avatar}</div>
+        <div>
+          <div class="mname">${uname}</div>
+          <div class="mstatus">${m.anime? '🎌 '+m.anime : 'membro da Aldeia'}</div>
+        </div>
+      </div>`;
+  }
+
+  viewEl.innerHTML = `
+    <div class="msn-window holo-border">
+      <div class="msn-titlebar">👤 Homepage de ${viewingProfile} <div class="titlebar-dots"><span></span><span></span><span></span></div></div>
+      <div class="msn-body">
+        <div class="profile-header">
+          <div class="avatar-big">${profile.avatar}</div>
+          <div>
+            <div class="profile-name">${viewingProfile} ${isOwn?'(você)':''}</div>
+            <div class="profile-tag"><span class="status-dot"></span> online na Aldeia</div>
+            <div class="profile-facts">
+              ${profile.verse?`<span class="fact-pill">📖 ${profile.verse}</span>`:''}
+              ${profile.anime?`<span class="fact-pill">🎌 ${profile.anime}</span>`:''}
+              <span class="fact-pill">🤝 ${(profile.friends||[]).length} amigos</span>
+            </div>
+          </div>
+          ${!isOwn ? `<button class="btn-glossy small ${isFriend?'':'blue'} shine" id="btnAddFriend" ${isFriend?'disabled':''}>${isFriend?'✓ já são amigos':'+ adicionar amigo'}</button>` : ''}
+        </div>
+        <p style="font-weight:600; color:var(--ink-soft);">${profile.bio}</p>
+
+        ${isOwn ? `
+          <div class="divider"></div>
+          <h4 style="color:var(--aero-deep); margin-bottom:12px;">✏️ Editar minha homepage</h4>
+          <div class="grid-2">
+            <div class="field"><label>Bio</label><textarea id="editBio">${profile.bio==='Ainda não escreveu nada sobre si.'?'':profile.bio}</textarea></div>
+            <div>
+              <div class="field"><label>Versículo favorito</label><input id="editVerse" value="${profile.verse||''}" placeholder="ex: Filipenses 4:13"></div>
+              <div class="field"><label>Anime favorito</label><input id="editAnime" value="${profile.anime||''}" placeholder="ex: Fullmetal Alchemist"></div>
+            </div>
+          </div>
+          <div class="field"><label>Avatar</label>
+            <select id="editAvatar">${AVATARS.map(a=>`<option ${a===profile.avatar?'selected':''}>${a}</option>`).join('')}</select>
+          </div>
+          <button class="btn-glossy shine" id="btnSaveProfile">💾 Salvar homepage</button>
+        ` : ''}
+
+        <div class="divider"></div>
+        <h4 style="color:var(--aero-deep); margin-bottom:12px;">💌 Mural de recados</h4>
+        <div id="guestbookList">
+          ${guestbook.length? guestbook.map(g=>`<div class="recado"><div class="from">${g.from}</div><div class="text">${g.text}</div></div>`).join('') : '<p class="small-note">Ainda sem recados. Seja o primeiro a deixar um!</p>'}
+        </div>
+        ${!isOwn || true ? `
+          <div class="field" style="margin-top:14px;">
+            <textarea id="newRecado" placeholder="Deixe um recado pra ${viewingProfile}..."></textarea>
+          </div>
+          <button class="btn-glossy purple small shine" id="btnRecado">💌 Enviar recado</button>
+        ` : ''}
+
+        <div class="divider"></div>
+        <h4 style="color:var(--aero-deep); margin-bottom:12px;">👥 Membros da Aldeia</h4>
+        <div class="member-grid">
+          ${membersHtml || '<p class="small-note">Você é o primeiro membro por aqui!</p>'}
+        </div>
+
+        <div class="divider"></div>
+        <button class="btn-glossy blue small" id="btnLogout">↩ Sair (trocar de usuário)</button>
+      </div>
+    </div>
+  `;
+
+  document.querySelectorAll('.member-chip').forEach(chip=>{
+    chip.addEventListener('click', ()=>{ viewingProfile = chip.dataset.user; renderComunidade(); });
+  });
+
+  const btnAdd = document.getElementById('btnAddFriend');
+  if(btnAdd){
+    btnAdd.addEventListener('click', async ()=>{
+      const mp = await getShared('member:'+currentUser);
+      mp.friends = mp.friends || [];
+      if(!mp.friends.includes(viewingProfile)){
+        mp.friends.push(viewingProfile);
+        await setShared('member:'+currentUser, mp);
+      }
+      renderComunidade();
+    });
+  }
+
+  const btnSave = document.getElementById('btnSaveProfile');
+  if(btnSave){
+    btnSave.addEventListener('click', async ()=>{
+      const p = await getShared('member:'+currentUser);
+      p.bio = document.getElementById('editBio').value.trim() || 'Ainda não escreveu nada sobre si.';
+      p.verse = document.getElementById('editVerse').value.trim();
+      p.anime = document.getElementById('editAnime').value.trim();
+      p.avatar = document.getElementById('editAvatar').value;
+      await setShared('member:'+currentUser, p);
+      renderComunidade();
+    });
+  }
+
+  const btnRecado = document.getElementById('btnRecado');
+  if(btnRecado){
+    btnRecado.addEventListener('click', async ()=>{
+      const text = document.getElementById('newRecado').value.trim();
+      if(!text) return;
+      const gb = (await getShared('guestbook:'+viewingProfile)) || [];
+      gb.unshift({from:currentUser, text});
+      await setShared('guestbook:'+viewingProfile, gb);
+      renderComunidade();
+    });
+  }
+
+  document.getElementById('btnLogout').addEventListener('click', async ()=>{
+    await setPersonal('currentUser', '');
+    currentUser = null;
+    viewingProfile = null;
+    renderComunidade();
+  });
+}
+
+render();
+
+/* ============ Rádio persistente (estilo Windows Media Player) ============ */
+(function(){
+  const STATIONS = [
+    {name:'Rádio Ding — Gospel', url:'https://ec1.everestcast.host:1750/;'},
+    {name:'GL365 — Gospel/Louvor', url:'https://ec1.everestcast.host:2650/;'},
+    {name:'Faithful Gospel Radio', url:'http://ams-pioneer02.dedicateware.com:1430/stream'}
+  ];
+
+  const audio = document.getElementById('rpAudio');
+  const playerEl = document.getElementById('radioPlayer');
+  const btnPlay = document.getElementById('rpPlay');
+  const btnMin = document.getElementById('rpMin');
+  const titlebar = document.getElementById('rpTitlebar');
+  const volumeSlider = document.getElementById('rpVolume');
+  const stationNameEl = document.getElementById('rpStationName');
+  const statusEl = document.getElementById('rpStatus');
+  const stationsEl = document.getElementById('rpStations');
+
+  let stationIndex = 0;
+
+  stationsEl.innerHTML = STATIONS.map((s,i)=>`<button class="rp-station-btn ${i===0?'active':''}" data-i="${i}">📻 ${s.name}</button>`).join('');
+
+  function setStation(i, autoplay){
+    stationIndex = i;
+    const s = STATIONS[i];
+    audio.src = s.url;
+    stationNameEl.textContent = s.name;
+    document.querySelectorAll('.rp-station-btn').forEach((b,idx)=>b.classList.toggle('active', idx===i));
+    if(autoplay){ tryPlay(); }
+  }
+
+  function tryPlay(){
+    statusEl.textContent = 'conectando...';
+    audio.play().then(()=>{
+      playerEl.classList.add('playing');
+      btnPlay.textContent = '⏸';
+      statusEl.textContent = 'tocando agora';
+    }).catch(()=>{
+      statusEl.textContent = 'não rolou tocar — tenta de novo ou troca de estação';
+      playerEl.classList.remove('playing');
+      btnPlay.textContent = '▶';
+    });
+  }
+
+  btnPlay.addEventListener('click', ()=>{
+    if(audio.paused){
+      if(!audio.src) setStation(stationIndex, false);
+      tryPlay();
+    } else {
+      audio.pause();
+      playerEl.classList.remove('playing');
+      btnPlay.textContent = '▶';
+      statusEl.textContent = 'pausado';
+    }
+  });
+
+  audio.addEventListener('waiting', ()=>{ statusEl.textContent = 'carregando...'; });
+  audio.addEventListener('playing', ()=>{ statusEl.textContent = 'tocando agora'; playerEl.classList.add('playing'); btnPlay.textContent='⏸'; });
+  audio.addEventListener('error', ()=>{
+    statusEl.textContent = 'essa estação caiu — tenta outra da lista';
+    playerEl.classList.remove('playing');
+    btnPlay.textContent = '▶';
+  });
+
+  volumeSlider.addEventListener('input', ()=>{
+    audio.volume = volumeSlider.value/100;
+  });
+  audio.volume = 0.7;
+
+  stationsEl.addEventListener('click', (e)=>{
+    const btn = e.target.closest('.rp-station-btn');
+    if(!btn) return;
+    const wasPlaying = !audio.paused;
+    setStation(parseInt(btn.dataset.i), wasPlaying);
+  });
+
+  btnMin.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    playerEl.classList.toggle('collapsed');
+    btnMin.textContent = playerEl.classList.contains('collapsed') ? '▢' : '–';
+  });
+  titlebar.addEventListener('click', (e)=>{
+    if(e.target===btnMin) return;
+    playerEl.classList.toggle('collapsed');
+    btnMin.textContent = playerEl.classList.contains('collapsed') ? '▢' : '–';
+  });
+
+  setStation(0, false);
+})();
+</script>
+</body>
+</html>
