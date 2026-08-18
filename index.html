@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aldeia dos Crentes</title>
@@ -924,15 +925,36 @@ const STATIONS = [
 
   stationsEl.innerHTML = STATIONS.map((s,i)=>`<button class="rp-station-btn ${i===0?'active':''}" data-i="${i}">📻 ${s.name}</button>`).join('');
 
-  function setStation(i, autoplay){
-    stationIndex = i;
-    const s = STATIONS[i];
-    audio.src = s.url;
-    stationNameEl.textContent = s.name;
-    document.querySelectorAll('.rp-station-btn').forEach((b,idx)=>b.classList.toggle('active', idx===i));
-    if(autoplay){ tryPlay(); }
+  let hls = null;
+
+function setStation(i, autoplay){
+  stationIndex = i;
+  const s = STATIONS[i];
+
+  if(hls){
+    hls.destroy();
+    hls = null;
   }
 
+  stationNameEl.textContent = s.name;
+
+  document.querySelectorAll('.rp-station-btn').forEach((b,idx)=>
+    b.classList.toggle('active', idx===i)
+  );
+
+  if(s.url.includes('.m3u8') && window.Hls && Hls.isSupported()){
+    hls = new Hls();
+    hls.loadSource(s.url);
+    hls.attachMedia(audio);
+
+    hls.on(Hls.Events.MANIFEST_PARSED, ()=>{
+      if(autoplay) tryPlay();
+    });
+  } else {
+    audio.src = s.url;
+    if(autoplay) tryPlay();
+  }
+}
   function tryPlay(){
     statusEl.textContent = 'conectando...';
     audio.play().then(()=>{
