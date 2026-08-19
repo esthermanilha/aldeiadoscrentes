@@ -266,7 +266,7 @@
   /* ---------- Chat lateral ---------- */
   .chat-toggle{
     position:fixed; right:20px; bottom:20px; z-index:50; width:54px; height:54px; border-radius:50%; border:none; cursor:pointer;
-    background:linear-gradient(180deg, #7FDDFF, var(--aero-deep)); color:#fff; font-size:1.4rem;
+    background:linear-gradient(180deg, #7FDDFF, var(--aero-deep)); color:#fff; font-size:0.85rem; font-weight:800;
     box-shadow: inset 0 2px 1px rgba(255,255,255,0.7), 0 10px 24px rgba(6,70,100,0.35);
   }
   .chat-badge{ position:absolute; top:-4px; right:-4px; background:#E0517A; color:#fff; font-size:0.65rem; font-weight:800; border-radius:999px; padding:2px 6px; }
@@ -318,7 +318,7 @@
   .wmp-progress-fill{ height:100%; width:35%; background:linear-gradient(180deg, #d4ffb0, var(--lime-deep)); }
   .wmp-bottom-row{ display:flex; align-items:center; gap:6px; }
   .wmp-stations select{ flex:1; padding:5px 8px; border-radius:8px; border:1px solid #9cc9ec; background:#fff; font-weight:700; font-size:0.72rem; color:var(--ink); }
-  .wmp-vol{ width:16px; height:16px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff, #9cc9ec); border:none; cursor:pointer; flex-shrink:0; }
+  .wmp-vol{ border-radius:8px; background:#fff; border:1px solid #9cc9ec; cursor:pointer; flex-shrink:0; font-size:0.65rem; font-weight:800; color:var(--aero-deep); padding:4px 8px; }
   .wmp-volume-row{ display:flex; align-items:center; gap:6px; margin-top:6px; }
   .wmp-volume-row input[type=range]{ flex:1; accent-color:#2E6BAE; }
   @media (max-width:860px){
@@ -329,69 +329,94 @@
 
   footer{ text-align:center; padding:30px 0 130px; color:var(--ink-soft); font-weight:700; font-size:0.85rem; }
 
+  @media (max-width:860px){
+    .hero{ grid-template-columns:1fr; padding-top:26px; }
+    .hero h1{ font-size:2rem; }
+    .orb-stage{ height:200px; }
+    .orb{ width:140px; height:140px; }
+    .orb-ring{ width:180px; height:180px; }
+    .grid-3, .grid-2, .member-grid, .badge-grid{ grid-template-columns:1fr 1fr; }
+    .tabs{ margin-left:0; width:100%; justify-content:flex-start; }
+  }
+  @media (prefers-reduced-motion: reduce){ *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; } }
+  :focus-visible{ outline:3px solid var(--aero-deep); outline-offset:3px; }
+
+  /* ---------- Leitor bíblico completo ---------- */
+  .bible-reader{ margin-top:18px; }
+  .bible-reader-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
+  .bible-reader-head h3{ color:var(--aero-deep); font-size:1.15rem; }
+  .bible-testament-tabs{ display:flex; gap:7px; flex-wrap:wrap; margin-bottom:14px; }
+  .bible-testament-tabs button{ border:1px solid var(--glass-border); background:rgba(255,255,255,.55); color:var(--ink-soft); padding:8px 13px; border-radius:999px; cursor:pointer; font-weight:800; }
+  .bible-testament-tabs button.active{ color:#fff; background:linear-gradient(180deg,var(--msn-blue),var(--msn-blue-dark)); }
+  .bible-books{ display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:16px; }
+  .bible-book-btn{ border:1px solid var(--glass-border); background:rgba(255,255,255,.55); color:var(--aero-deep); border-radius:12px; padding:9px 7px; cursor:pointer; font-weight:800; font-size:.76rem; transition:.15s ease; }
+  .bible-book-btn:hover,.bible-book-btn.active{ background:#fff; transform:translateY(-1px); box-shadow:0 5px 12px rgba(11,110,153,.12); }
+  .bible-chapters{ display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 18px; }
+  .bible-chapter-btn{ width:35px; height:35px; border:none; border-radius:10px; background:rgba(255,255,255,.65); color:var(--aero-deep); font-weight:800; cursor:pointer; }
+  .bible-chapter-btn.active{ color:#fff; background:var(--msn-blue-dark); }
+  .bible-reading-title{ font-family:'Baloo 2'; font-weight:800; color:var(--aero-deep); font-size:1.3rem; margin:5px 0 12px; }
+  .bible-verse-row{ position:relative; padding:11px 12px; border-radius:12px; margin-bottom:6px; line-height:1.65; font-weight:600; cursor:pointer; transition:.15s ease; border:1px solid transparent; }
+  .bible-verse-row:hover{ background:rgba(255,255,255,.48); border-color:var(--glass-border); }
+  .bible-verse-number{ font-weight:900; color:var(--aero-deep); margin-right:8px; font-size:.78rem; vertical-align:super; }
+  .bible-verse-row.mark-yellow{ background:rgba(255,212,107,.48); }
+  .bible-verse-row.mark-green{ background:rgba(183,232,119,.48); }
+  .bible-verse-row.mark-pink{ background:rgba(255,179,230,.48); }
+  .bible-verse-row.mark-blue{ background:rgba(143,227,255,.48); }
+  .bible-verse-tools{ display:none; gap:7px; align-items:center; flex-wrap:wrap; padding:7px 0 2px 27px; }
+  .bible-verse-row.selected .bible-verse-tools{ display:flex; }
+  .bible-note-input{ width:min(430px,100%); border:1px solid var(--glass-border); background:rgba(255,255,255,.78); border-radius:10px; padding:7px 10px; color:var(--ink); font-weight:600; }
+  .bible-note-saved{ display:block; margin:6px 0 0 27px; color:var(--ink-soft); font-size:.78rem; font-style:italic; }
+  .bible-loading,.bible-error{ padding:18px; text-align:center; color:var(--ink-soft); font-weight:700; background:rgba(255,255,255,.4); border-radius:14px; }
+  .bible-error{ color:#9b3f54; }
+  .yv-attribution{ text-align:center; font-size:.7rem; color:var(--ink-soft); margin-top:8px; font-weight:700; }
+  @media(max-width:860px){ .bible-books{grid-template-columns:repeat(3,1fr);} }
+  @media(max-width:520px){ .bible-books{grid-template-columns:repeat(2,1fr);} }
+
+</style>
+</head>
+<body> <div class="bubble-field" aria-hidden="true" id="bubbleField"></div> <div class="wrap"> <nav class="msn-bar"> <div class="brand"><span class="logo-mark"></span> Aldeia dos Crentes</div> <div class="tabs" id="tabs"> <button class="tab-btn active" data-tab="inicio"> Início</button> <button class="tab-btn" data-tab="galeria"> Galeria</button> <button class="tab-btn" data-tab="redes"> Redes</button> <button class="tab-btn" data-tab="forum"> Fórum</button> <button class="tab-btn" data-tab="biblia"> Bíblia</button> <button class="tab-btn" data-tab="comunidade"> Home</button> </div> </nav> <div id="view"></div> <footer>Aldeia dos Crentes © 2026 — fé, anime e boas amizades </footer>
 </div>
 
 <!-- Player estilo Windows Media Player -->
 <div class="wmp-player" id="wmpPlayer">
-
   <div class="wmp-titlebar" id="wmpTitlebar">
-    <span class="wmp-icon"></span>
-    Windows Media Player — Rádio da Aldeia
+    <span class="wmp-icon"></span> Windows Media Player — Rádio da Aldeia
     <button class="wmp-min" id="wmpMin">–</button>
   </div>
-
   <div class="wmp-body">
-
     <div class="wmp-wheel">
       <button class="wmp-prev" id="wmpPrev">◀</button>
       <button class="wmp-play-btn" id="wmpPlay">▶</button>
       <button class="wmp-next" id="wmpNext">▶</button>
     </div>
-
     <div class="wmp-screen">
-
       <div class="wmp-display">
         <div class="wmp-status" id="wmpStatus">PARADO</div>
         <div class="wmp-clock" id="wmpClock">00:00:00</div>
-        <div class="wmp-track" id="wmpTrack">
-          Rádio da Aldeia — ao vivo
-        </div>
+        <div class="wmp-track" id="wmpTrack">Rádio da Aldeia — ao vivo</div>
       </div>
-
-      <div class="wmp-progress">
-        <div class="wmp-progress-fill" id="wmpProgressFill"></div>
-      </div>
-
+      <div class="wmp-progress"><div class="wmp-progress-fill" id="wmpProgressFill"></div></div>
       <div class="wmp-bottom-row">
-        <div class="wmp-stations">
-          <select id="wmpStations"></select>
-        </div>
-
-        <button
-          class="wmp-vol"
-          id="wmpMute"
-          title="Mudo"
-        >🔊</button>
+        <div class="wmp-stations"><select id="wmpStations"></select></div>
+        <button class="wmp-vol" id="wmpMute" title="Mudo">Vol</button>
       </div>
-
-      <div class="wmp-volume-row">
-        <span style="font-size:0.65rem;">Volume</span>
-        <input
-          type="range"
-          id="wmpVolume"
-          min="0"
-          max="100"
-          value="70"
-        >
-      </div>
-
+      <div class="wmp-volume-row"><span style="font-size:0.65rem;">Vol</span><input type="range" id="wmpVolume" min="0" max="100" value="70"></div>
     </div>
-
   </div>
+</div>
+<audio id="wmpAudio" preload="none"></audio>
 
+<!-- Chat lateral -->
+<button class="chat-toggle" id="chatToggle">Chat<span class="chat-badge" id="chatBadge" style="display:none;">novo</span></button>
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-tabs">
+    <button class="active" data-ctab="amigos" id="ctabAmigos">Amigos</button>
+    <button data-ctab="grupo" id="ctabGrupo">Grupo geral</button>
+  </div>
+  <div id="chatArea" style="flex:1; display:flex; flex-direction:column; min-height:0;"></div>
 </div>
 
-<audio id="wmpAudio" preload="none"></audio>
+<script>
 /* ============ Bolhas de fundo ============ */
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 (function(){
@@ -516,14 +541,14 @@ async function getPosts(){
   if(!posts){
     const now = Date.now();
     posts = [
-      {id:'seed1', board:'novidades', type:'post', author:'equipe-aldeia', text:'Hoje removemos as transmissões antigas do Discord pra deixar o servidor mais organizado. Em breve tem novidade no lugar! ', likes:[], comments:[], ts: now-1000*60*60*24},
-      {id:'seed2', board:'novidades', type:'post', author:'equipe-aldeia', text:'Resenha nova no Instagram sobre o último evento — corre lá conferir as fotos! ', likes:[], comments:[], ts: now-1000*60*60*24*3},
-      {id:'seed3', board:'novidades', type:'post', author:'equipe-aldeia', text:'Vídeo novo no YouTube saiu essa semana, com bastidores do encontro presencial ', likes:[], comments:[], ts: now-1000*60*60*24*5},
-      {id:'seed4', board:'novidades', type:'post', author:'equipe-aldeia', text:' Mês que vem é aniversário da Aldeia dos Crentes! Bora planejar uma comemoração juntos.', likes:[], comments:[], ts: now-1000*60*60*24*7},
-      {id:'seed5', board:'novidades', type:'post', author:'equipe-aldeia', text:'Essa semana vai ter call de louvor quinta às 20h — se você não quer perder, apareça! ', likes:[], comments:[], ts: now-1000*60*60*24*2},
-      {id:'poll1', board:'forum', type:'enquete', author:'equipe-aldeia', text:' Qual o seu livro da Bíblia favorito?', pollOptions:[['salmos','Salmos'],['joao','João'],['genesis','Gênesis'],['proverbios','Provérbios'],['apocalipse','Apocalipse']], pollVotes:{}, likes:[], comments:[], ts: now-1000*60*60*24*10},
-      {id:'poll2', board:'forum', type:'enquete', author:'equipe-aldeia', text:' Qual estilo de louvor você mais curte?', pollOptions:[['worship','Worship contemplativo'],['gospel-pop','Gospel pop'],['hinos','Hinos tradicionais'],['rock-gospel','Rock gospel'],['lofi','Lofi de oração']], pollVotes:{}, likes:[], comments:[], ts: now-1000*60*60*24*11},
-      {id:'poll3', board:'forum', type:'enquete', author:'equipe-aldeia', text:' Anime favorito da galera?', pollOptions:[['fma','Fullmetal Alchemist'],['aot','Attack on Titan'],['haikyuu','Haikyuu!!'],['clannad','Clannad'],['sk8','SK8 the Infinity']], pollVotes:{}, likes:[], comments:[], ts: now-1000*60*60*24*12}
+      {id:'seed1', board:'novidades', type:'post', author:'equipe-aldeia', text:'Hoje removemos as transmissões antigas do Discord pra deixar o servidor mais organizado. Em breve tem novidade no lugar!', likes:[], comments:[], ts: now-1000*60*60*24},
+      {id:'seed2', board:'novidades', type:'post', author:'equipe-aldeia', text:'Resenha nova no Instagram sobre o último evento — corre lá conferir as fotos!', likes:[], comments:[], ts: now-1000*60*60*24*3},
+      {id:'seed3', board:'novidades', type:'post', author:'equipe-aldeia', text:'Vídeo novo no YouTube saiu essa semana, com bastidores do encontro presencial', likes:[], comments:[], ts: now-1000*60*60*24*5},
+      {id:'seed4', board:'novidades', type:'post', author:'equipe-aldeia', text:'Mês que vem é aniversário da Aldeia dos Crentes! Bora planejar uma comemoração juntos.', likes:[], comments:[], ts: now-1000*60*60*24*7},
+      {id:'seed5', board:'novidades', type:'post', author:'equipe-aldeia', text:'Essa semana vai ter call de louvor quinta às 20h — se você não quer perder, apareça!', likes:[], comments:[], ts: now-1000*60*60*24*2},
+      {id:'poll1', board:'forum', type:'enquete', author:'equipe-aldeia', text:'Qual o seu livro da Bíblia favorito?', pollOptions:[['salmos','Salmos'],['joao','João'],['genesis','Gênesis'],['proverbios','Provérbios'],['apocalipse','Apocalipse']], pollVotes:{}, likes:[], comments:[], ts: now-1000*60*60*24*10},
+      {id:'poll2', board:'forum', type:'enquete', author:'equipe-aldeia', text:'Qual estilo de louvor você mais curte?', pollOptions:[['worship','Worship contemplativo'],['gospel-pop','Gospel pop'],['hinos','Hinos tradicionais'],['rock-gospel','Rock gospel'],['lofi','Lofi de oração']], pollVotes:{}, likes:[], comments:[], ts: now-1000*60*60*24*11},
+      {id:'poll3', board:'forum', type:'enquete', author:'equipe-aldeia', text:'Anime favorito da galera?', pollOptions:[['fma','Fullmetal Alchemist'],['aot','Attack on Titan'],['haikyuu','Haikyuu!!'],['clannad','Clannad'],['sk8','SK8 the Infinity']], pollVotes:{}, likes:[], comments:[], ts: now-1000*60*60*24*12}
     ];
     await setShared('posts', posts);
   }
@@ -552,7 +577,6 @@ function renderPostHTML(p){
   let pollHtml = '';
   if(p.type==='enquete' && p.pollOptions){
     const total = Object.values(p.pollVotes||{}).reduce((a,b)=>a+b,0);
-    const myChoice = currentUser ? null : null; // resolved async elsewhere via data attr
     pollHtml = '<div class="poll-block" data-post="'+p.id+'">' + p.pollOptions.map(([k,label])=>{
       const count = (p.pollVotes||{})[k]||0;
       const pct = total>0 ? Math.round((count/total)*100) : 0;
@@ -561,8 +585,8 @@ function renderPostHTML(p){
   }
   return `
     <div class="post" data-id="${p.id}"> <div class="post-head"> <span class="pauthor" data-user="${p.author}">${p.author}</span> <span class="ptag ${tagClass}">${tagLabel}</span> <span class="ptime">${timeAgo(p.ts)}</span> </div> <div class="post-text">${p.text}</div> ${pollHtml}
-      <div class="post-actions"> <button class="btn-ghost like-btn ${liked?'liked':''}" data-id="${p.id}"> ${p.likes.length}</button> <button class="btn-ghost comment-toggle" data-id="${p.id}"> ${p.comments.length} comentário${p.comments.length===1?'':'s'}</button> </div> <div class="post-comments" id="comments-${p.id}" style="display:none;"> ${p.comments.map(c=>`<div class="comment"><b>${c.author}:</b> ${c.text}</div>`).join('') || '<p class="small-note">Sem comentários ainda.</p>'}
-        <div class="comment-box"> <input type="text" placeholder="Escreva um comentário..." id="newcomment-${p.id}"> <button class="btn-glossy small" data-id="${p.id}" class="send-comment">Enviar</button> </div> </div> </div>`;
+      <div class="post-actions"> <button class="btn-ghost like-btn ${liked?'liked':''}" data-id="${p.id}">Curtir ${p.likes.length}</button> <button class="btn-ghost comment-toggle" data-id="${p.id}">Comentários ${p.comments.length}</button> </div> <div class="post-comments" id="comments-${p.id}" style="display:none;"> ${p.comments.map(c=>`<div class="comment"><b>${c.author}:</b> ${c.text}</div>`).join('') || '<p class="small-note">Sem comentários ainda.</p>'}
+        <div class="comment-box"> <input type="text" placeholder="Escreva um comentário..." id="newcomment-${p.id}"> <button class="btn-glossy small send-comment" data-id="${p.id}">Enviar</button> </div> </div> </div>`;
 }
 
 function attachPostHandlers(container){
@@ -586,7 +610,7 @@ function attachPostHandlers(container){
       box.style.display = box.style.display==='none' ? 'block' : 'none';
     });
   });
-  container.querySelectorAll('.post-comments button.btn-glossy').forEach(el=>{
+  container.querySelectorAll('.send-comment').forEach(el=>{
     el.addEventListener('click', async ()=>{
       if(!requireLogin()) return;
       const id = el.dataset.id;
@@ -620,7 +644,7 @@ function attachPostHandlers(container){
 
 async function renderInicio(){
   viewEl.innerHTML = `
-    <section class="hero"> <div> <span class="eyebrow"> comunidade cristã geek</span> <h1>Bem-vindo à<br><span>Aldeia dos Crentes</span></h1> <p>Um lugar pra jovens cristãos que também amam anime, mangá e cultura japonesa se encontrarem, orarem juntos e fazerem amizades de verdade — mas todo mundo é bem-vindo aqui, geek ou não.</p> <div class="hero-actions"> <a href="#" class="btn-glossy shine"> Entrar no Discord</a> <span class="online-pill"><span class="status-dot"></span> comunidade ativa todo dia</span> </div> </div> <div class="orb-stage"><div class="orb-ring"></div><div class="orb"></div></div> </section> <div class="msn-window holo-border"> <div class="msn-titlebar"> Mural de novidades <div class="titlebar-dots"><span></span><span></span><span></span></div></div> <div class="msn-body"> <div class="section-head"><h2>Fica por dentro do que rola na Aldeia</h2><p>Novidades, bastidores e avisos da semana.</p></div> <div id="newsList">Carregando...</div> </div> </div> `;
+    <section class="hero"> <div> <span class="eyebrow">comunidade cristã geek</span> <h1>Bem-vindo à<br><span>Aldeia dos Crentes</span></h1> <p>Um lugar pra jovens cristãos que também amam anime, mangá e cultura japonesa se encontrarem, orarem juntos e fazerem amizades de verdade — mas todo mundo é bem-vindo aqui, geek ou não.</p> <div class="hero-actions"> <a href="#" class="btn-glossy shine">Entrar no Discord</a> <span class="online-pill"><span class="status-dot"></span> comunidade ativa todo dia</span> </div> </div> <div class="orb-stage"><div class="orb-ring"></div><div class="orb"></div></div> </section> <div class="msn-window holo-border"> <div class="msn-titlebar">Mural de novidades <div class="titlebar-dots"><span></span><span></span><span></span></div></div> <div class="msn-body"> <div class="section-head"><h2>Fica por dentro do que rola na Aldeia</h2><p>Novidades, bastidores e avisos da semana.</p></div> <div id="newsList">Carregando...</div> </div> </div> `;
   const posts = (await getPosts()).filter(p=>p.board==='novidades').sort((a,b)=>b.ts-a.ts);
   const listEl = document.getElementById('newsList');
   listEl.innerHTML = posts.map(renderPostHTML).join('') || '<p class="small-note">Nenhuma novidade ainda.</p>';
@@ -629,19 +653,19 @@ async function renderInicio(){
 
 function renderGaleria(){
   viewEl.innerHTML = `
-    <div class="msn-window holo-border"> <div class="msn-titlebar"> Galeria <div class="titlebar-dots"><span></span><span></span><span></span></div></div> <div class="msn-body"> <div class="section-head"><h2>Confira o que já fizemos como Aldeia dos Crentes</h2><p>Um retrospecto do que a comunidade já viveu junto.</p></div> <div class="grid-3"> ${EVENTS.map(ev=>`<div class="glass-card shine"><div class="event-thumb">${ev.emoji}</div><div class="meta">${ev.date}</div><h3>${ev.name}</h3><p>${ev.desc}</p></div>`).join('')}
+    <div class="msn-window holo-border"> <div class="msn-titlebar">Galeria <div class="titlebar-dots"><span></span><span></span><span></span></div></div> <div class="msn-body"> <div class="section-head"><h2>Confira o que já fizemos como Aldeia dos Crentes</h2><p>Um retrospecto do que a comunidade já viveu junto.</p></div> <div class="grid-3"> ${EVENTS.map(ev=>`<div class="glass-card shine"><div class="event-thumb">${ev.emoji}</div><div class="meta">${ev.date}</div><h3>${ev.name}</h3><p>${ev.desc}</p></div>`).join('')}
         </div> </div> </div>`;
 }
 
 function renderRedes(){
   viewEl.innerHTML = `
-    <div class="msn-window holo-border"> <div class="msn-titlebar"> Redes sociais <div class="titlebar-dots"><span></span><span></span><span></span></div></div> <div class="msn-body"> <div class="section-head"><h2>O projeto Aldeia fora do Discord</h2><p>Nos acompanhe também nessas páginas.</p></div> <div class="grid-2"> ${REDES.map(v=>`<div class="video-card shine"><div class="video-thumb">${v.emoji}</div><div><div class="name">${v.name}</div><div class="desc">${v.desc}</div><a class="link" href="${v.link}">acessar →</a></div></div>`).join('')}
+    <div class="msn-window holo-border"> <div class="msn-titlebar">Redes sociais <div class="titlebar-dots"><span></span><span></span><span></span></div></div> <div class="msn-body"> <div class="section-head"><h2>O projeto Aldeia fora do Discord</h2><p>Nos acompanhe também nessas páginas.</p></div> <div class="grid-2"> ${REDES.map(v=>`<div class="video-card shine"><div class="video-thumb">${v.emoji}</div><div><div class="name">${v.name}</div><div class="desc">${v.desc}</div><a class="link" href="${v.link}">acessar →</a></div></div>`).join('')}
         </div> <p class="small-note" style="margin-top:14px;">Troque os links "#" pelos endereços reais das redes quando for publicar.</p> </div> </div>`;
 }
 
 async function renderForum(){
   viewEl.innerHTML = `
-    <div class="msn-window holo-border"> <div class="msn-titlebar"> Fórum da Aldeia <div class="titlebar-dots"><span></span><span></span><span></span></div></div> <div class="msn-body"> <div class="section-head"><h2>Timeline da comunidade</h2><p>Poste enquetes, desabafos ou qualquer coisa — e reaja aos posts da galera.</p></div> <div class="composer"> <div class="composer-row"> <select id="postType"><option value="post"> Post</option><option value="desabafo"> Desabafo</option><option value="enquete"> Enquete</option></select> </div> <textarea id="postText" placeholder="O que você quer compartilhar com a Aldeia?"></textarea> <div class="poll-builder" id="pollBuilder"> <input type="text" id="pollOpt1" placeholder="Opção 1"> <input type="text" id="pollOpt2" placeholder="Opção 2"> <input type="text" id="pollOpt3" placeholder="Opção 3 (opcional)"> <input type="text" id="pollOpt4" placeholder="Opção 4 (opcional)"> </div> <div><button class="btn-glossy small shine" id="btnPublish"> Publicar</button></div> </div> <div class="divider"></div> <div id="forumList">Carregando...</div> </div> </div>`;
+    <div class="msn-window holo-border"> <div class="msn-titlebar">Fórum da Aldeia <div class="titlebar-dots"><span></span><span></span><span></span></div></div> <div class="msn-body"> <div class="section-head"><h2>Timeline da comunidade</h2><p>Poste enquetes, desabafos ou qualquer coisa — e reaja aos posts da galera.</p></div> <div class="composer"> <div class="composer-row"> <select id="postType"><option value="post">Post</option><option value="desabafo">Desabafo</option><option value="enquete">Enquete</option></select> </div> <textarea id="postText" placeholder="O que você quer compartilhar com a Aldeia?"></textarea> <div class="poll-builder" id="pollBuilder"> <input type="text" id="pollOpt1" placeholder="Opção 1"> <input type="text" id="pollOpt2" placeholder="Opção 2"> <input type="text" id="pollOpt3" placeholder="Opção 3 (opcional)"> <input type="text" id="pollOpt4" placeholder="Opção 4 (opcional)"> </div> <div><button class="btn-glossy small shine" id="btnPublish">Publicar</button></div> </div> <div class="divider"></div> <div id="forumList">Carregando...</div> </div> </div>`;
   document.getElementById('postType').addEventListener('change', (e)=>{
     document.getElementById('pollBuilder').style.display = e.target.value==='enquete' ? 'flex' : 'none';
   });
@@ -654,7 +678,7 @@ async function renderForum(){
     const newPost = {id:'p'+Date.now(), board:'forum', type, author:currentUser, text, likes:[], comments:[], ts:Date.now()};
     if(type==='enquete'){
       const opts = [document.getElementById('pollOpt1').value, document.getElementById('pollOpt2').value, document.getElementById('pollOpt3').value, document.getElementById('pollOpt4').value]
-        .filter(o=>o.trim()).map(o=>[o.trim().toLowerCase().replace(/\\s+/g,'-'), o.trim()]);
+        .filter(o=>o.trim()).map(o=>[o.trim().toLowerCase().replace(/\s+/g,'-'), o.trim()]);
       if(opts.length<2){ alert('Coloca pelo menos 2 opções pra enquete.'); return; }
       newPost.pollOptions = opts; newPost.pollVotes = {};
     }
@@ -669,61 +693,221 @@ async function renderForum(){
 }
 
 /* ============ Bíblia ============ */
+
+/* ============ Bíblia completa (ALM1911.json) ============ */
+let BIBLE_DATA = null;
+let bibleBookIndex = 0;
+let bibleChapterIndex = 0;
+let bibleTestament = 'all';
+
+const BIBLE_BOOK_NAMES = [
+'Gênesis','Êxodo','Levítico','Números','Deuteronômio','Josué','Juízes','Rute','1 Samuel','2 Samuel',
+'1 Reis','2 Reis','1 Crônicas','2 Crônicas','Esdras','Neemias','Ester','Jó','Salmos','Provérbios',
+'Eclesiastes','Cânticos','Isaías','Jeremias','Lamentações','Ezequiel','Daniel','Oseias','Joel','Amós',
+'Obadias','Jonas','Miqueias','Naum','Habacuque','Sofonias','Ageu','Zacarias','Malaquias',
+'Mateus','Marcos','Lucas','João','Atos','Romanos','1 Coríntios','2 Coríntios','Gálatas','Efésios',
+'Filipenses','Colossenses','1 Tessalonicenses','2 Tessalonicenses','1 Timóteo','2 Timóteo','Tito',
+'Filemom','Hebreus','Tiago','1 Pedro','2 Pedro','1 João','2 João','3 João','Judas','Apocalipse'
+];
+
+function normalizeBible(raw){
+  let books = Array.isArray(raw) ? raw : (raw.books || raw.data || raw.bible || []);
+  if(!Array.isArray(books)) throw new Error('Formato do ALM1911.json não reconhecido.');
+
+  return books.map((book, bi)=>{
+    let chapters = book.chapters || book.capitulos || book.chapter || [];
+    if(!Array.isArray(chapters) && chapters && typeof chapters==='object') chapters = Object.values(chapters);
+
+    chapters = chapters.map(ch=>{
+      let verses = Array.isArray(ch) ? ch : (ch.verses || ch.versiculos || ch.verse || []);
+      if(!Array.isArray(verses) && verses && typeof verses==='object') verses = Object.values(verses);
+      return (verses || []).map(v=>{
+        if(typeof v==='string') return v;
+        return v.text || v.texto || v.content || v.verse || '';
+      });
+    });
+
+    return {
+      name: book.name || book.nome || book.book || book.title || BIBLE_BOOK_NAMES[bi] || ('Livro '+(bi+1)),
+      abbrev: book.abbrev || book.abbreviation || book.abreviacao || '',
+      chapters
+    };
+  }).filter(b=>b.chapters.length);
+}
+
+async function loadBibleData(){
+  if(BIBLE_DATA) return BIBLE_DATA;
+  const res = await fetch('./ALM1911.json', {cache:'force-cache'});
+  if(!res.ok) throw new Error('Não consegui carregar ALM1911.json ('+res.status+').');
+  BIBLE_DATA = normalizeBible(await res.json());
+  return BIBLE_DATA;
+}
+
+function bibleUserKey(){
+  return 'bible-reader:' + (currentUser || 'visitante');
+}
+
+async function getBiblePersonal(){
+  return await getPersonalJSON(bibleUserKey(), {highlights:{}, notes:{}, last:null});
+}
+
+async function saveBiblePersonal(data){
+  return await setPersonalJSON(bibleUserKey(), data);
+}
+
+function verseKey(bookIndex, chapterIndex, verseIndex){
+  return bookIndex+':'+chapterIndex+':'+verseIndex;
+}
+
+function escapeBibleText(s){
+  return String(s ?? '').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+async function drawBibleReader(){
+  const root = document.getElementById('bibleReader');
+  if(!root) return;
+  root.innerHTML='<div class="bible-loading">Carregando a Bíblia Almeida 1911...</div>';
+
+  try{
+    const books = await loadBibleData();
+    const personal = await getBiblePersonal();
+
+    if(personal.last && Number.isInteger(personal.last.book)){
+      bibleBookIndex = Math.min(personal.last.book, books.length-1);
+      bibleChapterIndex = Math.min(personal.last.chapter || 0, books[bibleBookIndex].chapters.length-1);
+    }
+
+    const visibleBooks = books.map((b,i)=>({b,i})).filter(({i})=>{
+      if(bibleTestament==='old') return i < 39;
+      if(bibleTestament==='new') return i >= 39;
+      return true;
+    });
+
+    const book = books[bibleBookIndex] || books[0];
+    const chapter = book.chapters[bibleChapterIndex] || book.chapters[0] || [];
+
+    root.innerHTML = `
+      <div class="bible-reader-head">
+        <h3>Leia a Bíblia</h3>
+        <span class="small-note">Almeida 1911</span>
+      </div>
+      <div class="bible-testament-tabs">
+        <button data-testament="all" class="${bibleTestament==='all'?'active':''}">Todos</button>
+        <button data-testament="old" class="${bibleTestament==='old'?'active':''}">Antigo Testamento</button>
+        <button data-testament="new" class="${bibleTestament==='new'?'active':''}">Novo Testamento</button>
+      </div>
+      <div class="bible-books">
+        ${visibleBooks.map(({b,i})=>`<button class="bible-book-btn ${i===bibleBookIndex?'active':''}" data-book="${i}">${escapeBibleText(b.name)}</button>`).join('')}
+      </div>
+      <div class="divider"></div>
+      <div class="bible-reading-title">${escapeBibleText(book.name)}</div>
+      <div class="small-note">Escolha o capítulo</div>
+      <div class="bible-chapters">
+        ${book.chapters.map((_,i)=>`<button class="bible-chapter-btn ${i===bibleChapterIndex?'active':''}" data-chapter="${i}">${i+1}</button>`).join('')}
+      </div>
+      <div class="bible-reading-title">${escapeBibleText(book.name)} ${bibleChapterIndex+1}</div>
+      <div id="bibleVerses">
+        ${chapter.map((text,vi)=>{
+          const key=verseKey(bibleBookIndex,bibleChapterIndex,vi);
+          const mark=personal.highlights[key] || '';
+          const note=personal.notes[key] || '';
+          return `<div class="bible-verse-row ${mark?'mark-'+mark:''}" data-verse="${vi}">
+            <span class="bible-verse-number">${vi+1}</span>${escapeBibleText(text)}
+            ${note?`<span class="bible-note-saved">Anotação: ${escapeBibleText(note)}</span>`:''}
+            <div class="bible-verse-tools">
+              <button class="mark-dot yellow" data-color="yellow" title="Amarelo"></button>
+              <button class="mark-dot green" data-color="green" title="Verde"></button>
+              <button class="mark-dot pink" data-color="pink" title="Rosa"></button>
+              <button class="mark-dot blue" data-color="blue" title="Azul"></button>
+              <button class="btn-ghost bible-clear-mark">Limpar</button>
+              <input class="bible-note-input" value="${escapeBibleText(note)}" placeholder="Escreva uma anotação...">
+              <button class="btn-ghost bible-save-note">Salvar nota</button>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+
+    root.querySelectorAll('[data-testament]').forEach(btn=>btn.onclick=()=>{
+      bibleTestament=btn.dataset.testament;
+      if(bibleTestament==='old' && bibleBookIndex>=39){ bibleBookIndex=0; bibleChapterIndex=0; }
+      if(bibleTestament==='new' && bibleBookIndex<39){ bibleBookIndex=39; bibleChapterIndex=0; }
+      drawBibleReader();
+    });
+
+    root.querySelectorAll('[data-book]').forEach(btn=>btn.onclick=async()=>{
+      bibleBookIndex=Number(btn.dataset.book); bibleChapterIndex=0;
+      const p=await getBiblePersonal(); p.last={book:bibleBookIndex,chapter:0}; await saveBiblePersonal(p);
+      drawBibleReader();
+    });
+
+    root.querySelectorAll('[data-chapter]').forEach(btn=>btn.onclick=async()=>{
+      bibleChapterIndex=Number(btn.dataset.chapter);
+      const p=await getBiblePersonal(); p.last={book:bibleBookIndex,chapter:bibleChapterIndex}; await saveBiblePersonal(p);
+      drawBibleReader();
+    });
+
+    root.querySelectorAll('.bible-verse-row').forEach(row=>{
+      row.addEventListener('click',e=>{
+        if(e.target.closest('button,input')) return;
+        root.querySelectorAll('.bible-verse-row.selected').forEach(r=>{if(r!==row)r.classList.remove('selected')});
+        row.classList.toggle('selected');
+      });
+
+      row.querySelectorAll('.mark-dot').forEach(dot=>dot.onclick=async(e)=>{
+        e.stopPropagation();
+        const vi=Number(row.dataset.verse), key=verseKey(bibleBookIndex,bibleChapterIndex,vi);
+        const p=await getBiblePersonal(); p.highlights[key]=dot.dataset.color; await saveBiblePersonal(p);
+        ['yellow','green','pink','blue'].forEach(c=>row.classList.remove('mark-'+c));
+        row.classList.add('mark-'+dot.dataset.color);
+      });
+
+      row.querySelector('.bible-clear-mark').onclick=async(e)=>{
+        e.stopPropagation();
+        const vi=Number(row.dataset.verse), key=verseKey(bibleBookIndex,bibleChapterIndex,vi);
+        const p=await getBiblePersonal(); delete p.highlights[key]; await saveBiblePersonal(p);
+        ['yellow','green','pink','blue'].forEach(c=>row.classList.remove('mark-'+c));
+      };
+
+      row.querySelector('.bible-save-note').onclick=async(e)=>{
+        e.stopPropagation();
+        const vi=Number(row.dataset.verse), key=verseKey(bibleBookIndex,bibleChapterIndex,vi);
+        const input=row.querySelector('.bible-note-input');
+        const p=await getBiblePersonal();
+        if(input.value.trim()) p.notes[key]=input.value.trim(); else delete p.notes[key];
+        await saveBiblePersonal(p);
+        drawBibleReader();
+      };
+    });
+
+  }catch(err){
+    console.error(err);
+    root.innerHTML=`<div class="bible-error">Não consegui abrir o ALM1911.json. No GitHub Pages ele precisa ficar na mesma pasta do index.html.</div>`;
+  }
+}
+
+
 async function renderBiblia(){
+  // O Versículo do Dia permanece no topo. Enquanto a chave oficial da
+  // YouVersion não estiver configurada, usamos o versículo diário local.
   const todayIndex = Math.floor(Date.now()/(1000*60*60*24)) % VERSES.length;
   const votd = VERSES[todayIndex];
+
   viewEl.innerHTML = `
-    <div class="msn-window holo-border"> <div class="msn-titlebar"> Bíblia <div class="titlebar-dots"><span></span><span></span><span></span></div></div> <div class="msn-body"> <div class="votd"> <div class="verse-ref"> Versículo do dia — ${votd.ref} (${votd.version})</div> <div class="verse-text">${votd.text}</div> </div> <div class="bible-toolbar"> <select id="bibleLang"> ${TRANSLATIONS.map(t=>`<option value="${t.lang}">${t.label}</option>`).join('')}
-          </select> </div> <div id="verseList"></div> <p class="small-note">Apenas versões protestantes. Esse é um conjunto inicial de versículos ilustrativos — dá pra conectar uma API bíblica completa depois pra ter o texto integral e mais versões.</p> ${currentUser ? `<div class="divider"></div><h4 style="color:var(--aero-deep); margin-bottom:10px;"> Meu bloco de notas</h4><textarea class="verse-note-textarea" id="myNotebook" placeholder="Suas anotações pessoais sobre a Palavra..." style="width:100%; min-height:100px; padding:10px 14px; border-radius:12px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.6); font-weight:600;"></textarea><div style="margin-top:8px;"><button class="btn-glossy small shine" id="btnSaveNotebook"> Salvar anotações</button></div>` : `<p class="small-note">Entre na Comunidade pra salvar versículos, grifar e escrever no seu bloco de notas.</p>`}
-      </div> </div>`;
+    <section style="padding:26px 0 40px;">
+      <div class="msn-window">
+        <div class="msn-titlebar">Bíblia <div class="titlebar-dots"><span></span><span></span><span></span></div></div>
+        <div class="msn-body">
+          <div class="votd">
+            <div class="verse-ref">Versículo do dia — ${votd.ref} (${votd.version})</div>
+            <div class="verse-text">${votd.text}</div>
+          </div>
 
-  async function drawVerses(){
-    const lang = document.getElementById('bibleLang').value;
-    const marks = currentUser ? (await getShared('bible-marks:'+currentUser)) || {} : {};
-    const list = VERSES.filter(v=>v.lang===lang);
-    document.getElementById('verseList').innerHTML = list.map(v=>{
-      const m = marks[v.id] || {};
-      const markClass = m.color ? 'mark-'+m.color : '';
-      return `
-      <div class="verse-card"> <div class="verse-ref">${v.ref} (${v.version})</div> <div class="verse-text ${markClass}">${v.text}</div> <div class="verse-actions"> <span class="mark-dot yellow" data-verse="${v.id}" data-color="yellow" title="grifar amarelo"></span> <span class="mark-dot green" data-verse="${v.id}" data-color="green" title="grifar verde"></span> <span class="mark-dot pink" data-verse="${v.id}" data-color="pink" title="grifar rosa"></span> <span class="mark-dot blue" data-verse="${v.id}" data-color="blue" title="grifar azul"></span> <button class="btn-ghost ${m.saved?'liked':''}" data-verse="${v.id}" id="save-${v.id}">${m.saved?' salvo':' salvar'}</button> </div> </div>`;
-    }).join('') || '<p class="small-note">Ainda sem versículos nesse idioma — em breve!</p>';
+          <div id="bibleReader" class="bible-reader"></div>
+        </div>
+      </div>
+    </section>`;
 
-    document.querySelectorAll('.mark-dot').forEach(dot=>{
-      dot.addEventListener('click', async ()=>{
-        if(!requireLogin()) return;
-        const marks = (await getShared('bible-marks:'+currentUser)) || {};
-        const vid = dot.dataset.verse;
-        marks[vid] = marks[vid] || {};
-        marks[vid].color = marks[vid].color===dot.dataset.color ? null : dot.dataset.color;
-        await setShared('bible-marks:'+currentUser, marks);
-        drawVerses();
-      });
-    });
-    document.querySelectorAll('[id^="save-"]').forEach(btn=>{
-      btn.addEventListener('click', async ()=>{
-        if(!requireLogin()) return;
-        const marks = (await getShared('bible-marks:'+currentUser)) || {};
-        const vid = btn.dataset.verse;
-        marks[vid] = marks[vid] || {};
-        marks[vid].saved = !marks[vid].saved;
-        await setShared('bible-marks:'+currentUser, marks);
-        drawVerses();
-      });
-    });
-  }
-  document.getElementById('bibleLang').addEventListener('change', drawVerses);
-  drawVerses();
-
-  if(currentUser){
-    const marks = (await getShared('bible-marks:'+currentUser)) || {};
-    document.getElementById('myNotebook').value = marks.__notebook || '';
-    document.getElementById('btnSaveNotebook').addEventListener('click', async ()=>{
-      const marks = (await getShared('bible-marks:'+currentUser)) || {};
-      marks.__notebook = document.getElementById('myNotebook').value;
-      await setShared('bible-marks:'+currentUser, marks);
-      alert('Anotações salvas!');
-    });
-  }
+  drawBibleReader();
 }
 
 /* ============ Comunidade (perfis estilo Orkut) ============ */
@@ -733,7 +917,7 @@ async function renderComunidade(){
 
   if(!currentUser){
     viewEl.innerHTML = `
-      <div class="msn-window holo-border"> <div class="msn-titlebar"> Comunidade <div class="titlebar-dots"><span></span><span></span><span></span></div></div> <div class="msn-body"> <div class="section-head"><h2>Crie sua homepage na Aldeia</h2><p>Escolha um nome, conte um pouco sobre você e apareça pros outros membros. Tudo o que você preencher fica visível pra qualquer pessoa que visitar o site — nada aqui é privado.</p></div> <div class="login-box"> <div class="field"><label>Como você quer ser chamado?</label><input type="text" id="loginName" placeholder="ex: joana_luz"></div> <button class="btn-glossy blue shine" id="btnEntrar"> Entrar / criar minha homepage</button> </div> </div> </div>`;
+      <div class="msn-window holo-border"> <div class="msn-titlebar">Comunidade <div class="titlebar-dots"><span></span><span></span><span></span></div></div> <div class="msn-body"> <div class="section-head"><h2>Crie sua homepage na Aldeia</h2><p>Escolha um nome, conte um pouco sobre você e apareça pros outros membros. Tudo o que você preencher fica visível pra qualquer pessoa que visitar o site — nada aqui é privado.</p></div> <div class="login-box"> <div class="field"><label>Como você quer ser chamado?</label><input type="text" id="loginName" placeholder="ex: joana_luz"></div> <button class="btn-glossy blue shine" id="btnEntrar">Entrar / criar minha homepage</button> </div> </div> </div>`;
     document.getElementById('btnEntrar').addEventListener('click', async ()=>{
       const name = document.getElementById('loginName').value.trim();
       if(!name){ alert('Digita um nome primeiro :)'); return; }
@@ -773,7 +957,7 @@ async function renderComunidade(){
     const m = await getShared('member:'+uname);
     if(!m) continue;
     const mAvatar = m.avatarUrl ? `<img src="${m.avatarUrl}" alt="">` : m.avatar;
-    membersHtml += `<div class="member-chip" data-user="${uname}"><div class="avatar-sm">${mAvatar}</div><div><div class="mname">${uname}</div><div class="mstatus">${m.anime? ' '+m.anime : 'membro da Aldeia'}</div></div></div>`;
+    membersHtml += `<div class="member-chip" data-user="${uname}"><div class="avatar-sm">${mAvatar}</div><div><div class="mname">${uname}</div><div class="mstatus">${m.anime? m.anime : 'membro da Aldeia'}</div></div></div>`;
   }
 
   const allPosts = await getPosts();
@@ -787,20 +971,20 @@ async function renderComunidade(){
   });
 
   viewEl.innerHTML = `
-    <div class="msn-window holo-border"> <div class="msn-titlebar"> Homepage de ${viewingProfile} <div class="titlebar-dots"><span></span><span></span><span></span></div></div> <div class="msn-body"> <div class="profile-header"> <div class="avatar-big">${avatarHtml}</div> <div> <div class="profile-name">${viewingProfile} ${isOwn?'(você)':''}</div> <div class="profile-tag"><span class="status-dot"></span> online na Aldeia</div> <div class="profile-facts"> ${profile.verse?`<span class="fact-pill"> ${profile.verse}</span>`:''}
-              ${profile.anime?`<span class="fact-pill"> ${profile.anime}</span>`:''}
-              <span class="fact-pill"> ${(profile.friends||[]).length} amigos</span> ${topBadges.map(([k,v])=>{ const b=BADGES.find(x=>x[0]===k); return b?`<span class="badge-pill">${b[1]} (${v})</span>`:''; }).join('')}
-            </div> </div> ${!isOwn ? `<button class="btn-glossy small ${isFriend?'':'blue'} shine" id="btnAddFriend" ${isFriend?'disabled':''}>${isFriend?' já são amigos':'+ adicionar amigo'}</button>` : ''}
+    <div class="msn-window holo-border"> <div class="msn-titlebar">Homepage de ${viewingProfile} <div class="titlebar-dots"><span></span><span></span><span></span></div></div> <div class="msn-body"> <div class="profile-header"> <div class="avatar-big">${avatarHtml}</div> <div> <div class="profile-name">${viewingProfile} ${isOwn?'(você)':''}</div> <div class="profile-tag"><span class="status-dot"></span> online na Aldeia</div> <div class="profile-facts"> ${profile.verse?`<span class="fact-pill">${profile.verse}</span>`:''}
+              ${profile.anime?`<span class="fact-pill">${profile.anime}</span>`:''}
+              <span class="fact-pill">${(profile.friends||[]).length} amigos</span> ${topBadges.map(([k,v])=>{ const b=BADGES.find(x=>x[0]===k); return b?`<span class="badge-pill">${b[1]} (${v})</span>`:''; }).join('')}
+            </div> </div> ${!isOwn ? `<button class="btn-glossy small ${isFriend?'':'blue'} shine" id="btnAddFriend" ${isFriend?'disabled':''}>${isFriend?'Já são amigos':'+ adicionar amigo'}</button>` : ''}
         </div> <p style="font-weight:600; color:var(--ink-soft);">${profile.bio}</p> ${!isOwn ? `
-          <div class="divider"></div> <h4 style="color:var(--aero-deep); margin-bottom:10px;"> Vote em ${viewingProfile}</h4> <div class="badge-grid"> ${BADGES.map(([k,label])=>`<button class="badge-btn ${myVoteOnThisProfile===k?'voted':''}" data-badge="${k}">${label}<small>${badgeVotes[k]||0} voto${(badgeVotes[k]||0)===1?'':'s'}</small></button>`).join('')}
+          <div class="divider"></div> <h4 style="color:var(--aero-deep); margin-bottom:10px;">Vote em ${viewingProfile}</h4> <div class="badge-grid"> ${BADGES.map(([k,label])=>`<button class="badge-btn ${myVoteOnThisProfile===k?'voted':''}" data-badge="${k}">${label}<small>${badgeVotes[k]||0} voto${(badgeVotes[k]||0)===1?'':'s'}</small></button>`).join('')}
           </div> ` : ''}
 
         ${isOwn ? `
-          <div class="divider"></div> <h4 style="color:var(--aero-deep); margin-bottom:12px;">Editar Editar minha homepage</h4> <div class="grid-2"> <div class="field"><label>Bio</label><textarea id="editBio">${profile.bio==='Ainda não escreveu nada sobre si.'?'':profile.bio}</textarea></div> <div> <div class="field"><label>Versículo favorito</label><input id="editVerse" value="${profile.verse||''}" placeholder="ex: Filipenses 4:13"></div> <div class="field"><label>Anime favorito</label><input id="editAnime" value="${profile.anime||''}" placeholder="ex: Fullmetal Alchemist"></div> </div> </div> <div class="field"><label>Avatar (emoji)</label><select id="editAvatar">${AVATARS.map(a=>`<option ${a===profile.avatar?'selected':''}>${a}</option>`).join('')}</select></div> <div class="field"><label>Ou link de uma foto sua</label><input id="editAvatarUrl" value="${profile.avatarUrl||''}" placeholder="https://... (opcional, substitui o emoji)"><small>Cole o link de uma imagem já hospedada (ex: no Imgur). Sem upload de arquivo direto por aqui.</small></div> <button class="btn-glossy shine" id="btnSaveProfile"> Salvar homepage</button> ` : ''}
+          <div class="divider"></div> <h4 style="color:var(--aero-deep); margin-bottom:12px;">Editar minha homepage</h4> <div class="grid-2"> <div class="field"><label>Bio</label><textarea id="editBio">${profile.bio==='Ainda não escreveu nada sobre si.'?'':profile.bio}</textarea></div> <div> <div class="field"><label>Versículo favorito</label><input id="editVerse" value="${profile.verse||''}" placeholder="ex: Filipenses 4:13"></div> <div class="field"><label>Anime favorito</label><input id="editAnime" value="${profile.anime||''}" placeholder="ex: Fullmetal Alchemist"></div> </div> </div> <div class="field"><label>Avatar</label><select id="editAvatar">${AVATARS.map(a=>`<option ${a===profile.avatar?'selected':''}>${a}</option>`).join('')}</select></div> <div class="field"><label>Ou link de uma foto sua</label><input id="editAvatarUrl" value="${profile.avatarUrl||''}" placeholder="https://... (opcional, substitui o avatar)"><small>Cole o link de uma imagem já hospedada (ex: no Imgur). Sem upload de arquivo direto por aqui.</small></div> <button class="btn-glossy shine" id="btnSaveProfile">Salvar homepage</button> ` : ''}
 
-        <div class="divider"></div> <h4 style="color:var(--aero-deep); margin-bottom:12px;"> Depoimentos</h4> <div id="guestbookList">${guestbook.length? guestbook.map(g=>`<div class="recado"><div class="from">${g.from}</div><div class="text">${g.text}</div></div>`).join('') : '<p class="small-note">Ainda sem depoimentos. Seja o primeiro a deixar um!</p>'}</div> <div class="field" style="margin-top:14px;"><textarea id="newRecado" placeholder="Deixe um depoimento pra ${viewingProfile}..."></textarea></div> <button class="btn-glossy purple small shine" id="btnRecado"> Enviar depoimento</button> <div class="divider"></div> <h4 style="color:var(--aero-deep); margin-bottom:12px;"> Histórico de interações no fórum</h4> ${historyHtml || '<p class="small-note">Ainda sem atividade no fórum.</p>'}
+        <div class="divider"></div> <h4 style="color:var(--aero-deep); margin-bottom:12px;">Depoimentos</h4> <div id="guestbookList">${guestbook.length? guestbook.map(g=>`<div class="recado"><div class="from">${g.from}</div><div class="text">${g.text}</div></div>`).join('') : '<p class="small-note">Ainda sem depoimentos. Seja o primeiro a deixar um!</p>'}</div> <div class="field" style="margin-top:14px;"><textarea id="newRecado" placeholder="Deixe um depoimento pra ${viewingProfile}..."></textarea></div> <button class="btn-glossy purple small shine" id="btnRecado">Enviar depoimento</button> <div class="divider"></div> <h4 style="color:var(--aero-deep); margin-bottom:12px;">Histórico de interações no fórum</h4> ${historyHtml || '<p class="small-note">Ainda sem atividade no fórum.</p>'}
 
-        <div class="divider"></div> <h4 style="color:var(--aero-deep); margin-bottom:12px;"> Membros da Aldeia</h4> <div class="member-grid">${membersHtml || '<p class="small-note">Você é o primeiro membro por aqui!</p>'}</div> <div class="divider"></div> <button class="btn-glossy blue small" id="btnLogout">Voltar Sair (trocar de usuário)</button> </div> </div>`;
+        <div class="divider"></div> <h4 style="color:var(--aero-deep); margin-bottom:12px;">Membros da Aldeia</h4> <div class="member-grid">${membersHtml || '<p class="small-note">Você é o primeiro membro por aqui!</p>'}</div> <div class="divider"></div> <button class="btn-glossy blue small" id="btnLogout">Sair (trocar de usuário)</button> </div> </div>`;
 
   document.querySelectorAll('.member-chip').forEach(chip=>{ chip.addEventListener('click', ()=>{ viewingProfile = chip.dataset.user; renderComunidade(); }); });
 
@@ -905,7 +1089,7 @@ render();
     const msgs = (await getShared(key)) || [];
     area.innerHTML = `
       ${chatMode==='amigos' ? `<button class="chat-back" id="chatBack">← ${title}</button>` : ''}
-      <div class="chat-thread" id="chatThread">${msgs.map(m=>`<div class="chat-msg ${m.author===currentUser?'mine':''}"><span class="who">${m.author}</span>${m.text}</div>`).join('') || '<p class="small-note" style="padding:10px;">Nenhuma mensagem ainda — diga oi!</p>'}</div> <div class="chat-input-row"><input type="text" id="chatInput" placeholder="Escreva uma mensagem..."><button id="chatSend"></button></div> `;
+      <div class="chat-thread" id="chatThread">${msgs.map(m=>`<div class="chat-msg ${m.author===currentUser?'mine':''}"><span class="who">${m.author}</span>${m.text}</div>`).join('') || '<p class="small-note" style="padding:10px;">Nenhuma mensagem ainda — diga oi!</p>'}</div> <div class="chat-input-row"><input type="text" id="chatInput" placeholder="Escreva uma mensagem..."><button id="chatSend">Enviar</button></div> `;
     const thread = document.getElementById('chatThread');
     thread.scrollTop = thread.scrollHeight;
     const back = document.getElementById('chatBack');
@@ -938,9 +1122,13 @@ render();
 
 /* ============ Rádio (skin Windows Media Player) ============ */
 (function(){
-  const STATIONS = [
-    {name:'Rádio Aldeia', url:'https://stream.zeno.fm/jpqkapo4xffvv'}
+  const RADIO_NAME = 'Rádio Aldeia';
+
+  // Link direto da Rádio Aldeia na Zeno FM.
+  const STREAM_URLS = [
+    'https://stream.zeno.fm/jpqkapo4xffvv'
   ];
+
   const audio = document.getElementById('wmpAudio');
   const playerEl = document.getElementById('wmpPlayer');
   const btnPlay = document.getElementById('wmpPlay');
@@ -956,85 +1144,214 @@ render();
   const progressFill = document.getElementById('wmpProgressFill');
   const stationSelect = document.getElementById('wmpStations');
 
-  let stationIndex = 0;
   let seconds = 0;
   let clockTimer = null;
   let muted = false;
+  let streamIndex = 0;
+  let userStopped = true;
+  let retrying = false;
 
-  stationSelect.innerHTML = STATIONS.map((s,i)=>`<option value="${i}">${s.name}</option>`).join('');
+  stationSelect.innerHTML = '<option value="0">' + RADIO_NAME + '</option>';
+  stationSelect.disabled = true;
+  trackEl.textContent = 'Aldeia dos Crentes — ' + RADIO_NAME;
 
-  function fmt(n){ return String(n).padStart(2,'0'); }
+  // Ajuda o navegador a tratar o elemento como áudio ao vivo.
+  audio.preload = 'none';
+  audio.volume = 0.7;
+
+  function fmt(n){
+    return String(n).padStart(2,'0');
+  }
+
   function tickClock(){
     seconds++;
-    const h = Math.floor(seconds/3600), m = Math.floor((seconds%3600)/60), s = seconds%60;
+    const h = Math.floor(seconds/3600);
+    const m = Math.floor((seconds%3600)/60);
+    const s = seconds%60;
     clockEl.textContent = fmt(h)+':'+fmt(m)+':'+fmt(s);
-    progressFill.style.width = (10 + (seconds%50)) + '%';
+
+    // Rádio ao vivo não possui duração/progresso real.
+    progressFill.style.width = (15 + (seconds % 70)) + '%';
   }
 
-  function setStation(i, autoplay){
-    stationIndex = i;
-    stationSelect.value = i;
-    const s = STATIONS[i];
-    trackEl.textContent = 'Aldeia dos Crentes — ' + s.name;
-    if(autoplay) tryPlay();
-  }
-
-  async function tryPlay(){
-    statusEl.textContent = 'Play CONECTANDO...';
-
-    // Streams ao vivo (como Zeno FM) podem perder a conexão depois de pausar.
-    // Ao apertar Play, reconectamos ao endereço atual da rádio.
-    const s = STATIONS[stationIndex];
-    try {
-      audio.pause();
-      audio.removeAttribute('src');
-      audio.load();
-      audio.src = s.url;
-      audio.load();
-      await audio.play();
-      playerEl_playing(true);
-    } catch(err) {
-      console.error('Erro ao reproduzir a Rádio Aldeia:', err);
-      statusEl.textContent = 'Pausar NÃO FOI POSSÍVEL CONECTAR';
-      playerEl_playing(false);
-    }
-  }
-  function playerEl_playing(isPlaying){
+  function setPlaying(isPlaying){
     if(isPlaying){
-      btnPlay.textContent='Pausar'; statusEl.textContent='Play TOCANDO AGORA';
+      btnPlay.textContent = 'II';
+      statusEl.textContent = 'TOCANDO AGORA';
       if(!clockTimer) clockTimer = setInterval(tickClock, 1000);
     } else {
-      btnPlay.textContent='Play';
-      if(clockTimer){ clearInterval(clockTimer); clockTimer=null; }
+      btnPlay.textContent = '▶';
+      if(clockTimer){
+        clearInterval(clockTimer);
+        clockTimer = null;
+      }
     }
   }
 
-  btnPlay.addEventListener('click', ()=>{
-    if(audio.paused){
-      if(!audio.src) setStation(stationIndex, false);
-      tryPlay();
-    } else {
+  function setStream(index){
+    streamIndex = index % STREAM_URLS.length;
+    audio.src = STREAM_URLS[streamIndex];
+  }
+
+  async function connectRadio(){
+    userStopped = false;
+    retrying = false;
+    statusEl.textContent = 'CONECTANDO...';
+
+    try {
+      // Para stream ao vivo, criar uma conexão nova evita voltar
+      // para um buffer antigo depois de pausar.
       audio.pause();
-      statusEl.textContent = 'Pausar PAUSADO';
-      playerEl_playing(false);
+      setStream(streamIndex);
+      audio.load();
+
+      const playPromise = audio.play();
+      if(playPromise !== undefined) await playPromise;
+    } catch(err) {
+      console.error('Erro ao iniciar a Rádio Aldeia:', err);
+
+      if(streamIndex < STREAM_URLS.length - 1){
+        streamIndex++;
+        statusEl.textContent = 'TENTANDO OUTRA CONEXÃO...';
+        try {
+          setStream(streamIndex);
+          audio.load();
+          const retryPromise = audio.play();
+          if(retryPromise !== undefined) await retryPromise;
+        } catch(secondErr) {
+          console.error('Falha também na URL alternativa:', secondErr);
+          statusEl.textContent = 'NÃO FOI POSSÍVEL CONECTAR';
+          setPlaying(false);
+        }
+      } else {
+        statusEl.textContent = 'NÃO FOI POSSÍVEL CONECTAR';
+        setPlaying(false);
+      }
+    }
+  }
+
+  function stopRadio(){
+    userStopped = true;
+    audio.pause();
+
+    // Remove a conexão atual. No próximo Play, abre o ao vivo novamente.
+    audio.removeAttribute('src');
+    audio.load();
+
+    statusEl.textContent = 'PAUSADO';
+    setPlaying(false);
+  }
+
+  btnPlay.addEventListener('click', async ()=>{
+    if(!audio.paused && audio.src){
+      stopRadio();
+      return;
+    }
+
+    // Sempre reconecta usando o link direto da rádio.
+    streamIndex = 0;
+    await connectRadio();
+  });
+
+  // Há apenas uma rádio. Mantemos os botões do visual do Media Player:
+  btnPrev.addEventListener('click', async ()=>{
+    if(!userStopped){
+      streamIndex = 0;
+      await connectRadio();
     }
   });
-  btnPrev.addEventListener('click', ()=>{ const i=(stationIndex-1+STATIONS.length)%STATIONS.length; setStation(i, !audio.paused); });
-  btnNext.addEventListener('click', ()=>{ const i=(stationIndex+1)%STATIONS.length; setStation(i, !audio.paused); });
-  stationSelect.addEventListener('change', ()=>{ setStation(parseInt(stationSelect.value), !audio.paused); });
 
-  audio.addEventListener('waiting', ()=>{ statusEl.textContent='Play CARREGANDO...'; });
-  audio.addEventListener('playing', ()=>{ playerEl_playing(true); });
-  audio.addEventListener('error', ()=>{ statusEl.textContent='Pausar ESTAÇÃO CAIU — tenta outra'; playerEl_playing(false); });
+  btnNext.addEventListener('click', async ()=>{
+    if(!userStopped){
+      streamIndex = 0;
+      await connectRadio();
+    }
+  });
 
-  volumeSlider.addEventListener('input', ()=>{ audio.volume = volumeSlider.value/100; if(audio.volume>0 && muted){ muted=false; } });
-  audio.volume = 0.7;
-  btnMute.addEventListener('click', ()=>{ muted=!muted; audio.muted = muted; });
+  audio.addEventListener('loadstart', ()=>{
+    if(!userStopped) statusEl.textContent = 'CONECTANDO...';
+  });
 
-  btnMin.addEventListener('click', (e)=>{ e.stopPropagation(); playerEl.classList.toggle('collapsed'); btnMin.textContent = playerEl.classList.contains('collapsed') ? 'Expandir' : '–'; });
-  titlebar.addEventListener('click', (e)=>{ if(e.target===btnMin) return; playerEl.classList.toggle('collapsed'); btnMin.textContent = playerEl.classList.contains('collapsed') ? 'Expandir' : '–'; });
+  audio.addEventListener('waiting', ()=>{
+    if(!userStopped) statusEl.textContent = 'CARREGANDO...';
+  });
 
-  setStation(0, false);
+  audio.addEventListener('stalled', ()=>{
+    if(!userStopped) statusEl.textContent = 'RECONECTANDO...';
+  });
+
+  audio.addEventListener('canplay', ()=>{
+    if(!userStopped) statusEl.textContent = 'PRONTO';
+  });
+
+  audio.addEventListener('playing', ()=>{
+    retrying = false;
+    setPlaying(true);
+  });
+
+  audio.addEventListener('pause', ()=>{
+    if(userStopped) setPlaying(false);
+  });
+
+  audio.addEventListener('error', async ()=>{
+    if(userStopped || retrying) return;
+
+    const mediaError = audio.error;
+    console.error('Erro do elemento de áudio:', mediaError);
+
+    // Se houver erro, informa indisponibilidade sem trocar o endereço da rádio.
+    if(streamIndex < STREAM_URLS.length - 1){
+      retrying = true;
+      streamIndex++;
+      statusEl.textContent = 'TENTANDO OUTRA CONEXÃO...';
+
+      try {
+        setStream(streamIndex);
+        audio.load();
+        const p = audio.play();
+        if(p !== undefined) await p;
+      } catch(err) {
+        console.error('Erro na reconexão:', err);
+        statusEl.textContent = 'ESTAÇÃO INDISPONÍVEL';
+        setPlaying(false);
+      } finally {
+        retrying = false;
+      }
+    } else {
+      statusEl.textContent = 'ESTAÇÃO INDISPONÍVEL';
+      setPlaying(false);
+    }
+  });
+
+  volumeSlider.addEventListener('input', ()=>{
+    audio.volume = volumeSlider.value / 100;
+
+    if(audio.volume > 0 && muted){
+      muted = false;
+      audio.muted = false;
+      btnMute.textContent = 'Vol';
+    }
+  });
+
+  btnMute.addEventListener('click', ()=>{
+    muted = !muted;
+    audio.muted = muted;
+    btnMute.textContent = muted ? 'Mudo' : 'Vol';
+  });
+
+  btnMin.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    playerEl.classList.toggle('collapsed');
+    btnMin.textContent = playerEl.classList.contains('collapsed') ? '+' : '–';
+  });
+
+  titlebar.addEventListener('click', (e)=>{
+    if(e.target === btnMin) return;
+    playerEl.classList.toggle('collapsed');
+    btnMin.textContent = playerEl.classList.contains('collapsed') ? '+' : '–';
+  });
+
+  statusEl.textContent = 'PARADO';
 })();
 </script>
 </body>
