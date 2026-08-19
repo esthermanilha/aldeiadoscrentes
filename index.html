@@ -329,30 +329,69 @@
 
   footer{ text-align:center; padding:30px 0 130px; color:var(--ink-soft); font-weight:700; font-size:0.85rem; }
 
-  @media (max-width:860px){
-    .hero{ grid-template-columns:1fr; padding-top:26px; }
-    .hero h1{ font-size:2rem; }
-    .orb-stage{ height:200px; }
-    .orb{ width:140px; height:140px; }
-    .orb-ring{ width:180px; height:180px; }
-    .grid-3, .grid-2, .member-grid, .badge-grid{ grid-template-columns:1fr 1fr; }
-    .tabs{ margin-left:0; width:100%; justify-content:flex-start; }
-  }
-  @media (prefers-reduced-motion: reduce){ *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; } }
-  :focus-visible{ outline:3px solid var(--aero-deep); outline-offset:3px; }
-</style>
-</head>
-<body> <div class="bubble-field" aria-hidden="true" id="bubbleField"></div> <div class="wrap"> <nav class="msn-bar"> <div class="brand"><span class="logo-mark"></span> Aldeia dos Crentes</div> <div class="tabs" id="tabs"> <button class="tab-btn active" data-tab="inicio"> Início</button> <button class="tab-btn" data-tab="galeria"> Galeria</button> <button class="tab-btn" data-tab="redes"> Redes</button> <button class="tab-btn" data-tab="forum"> Fórum</button> <button class="tab-btn" data-tab="biblia"> Bíblia</button> <button class="tab-btn" data-tab="comunidade"> Home</button> </div> </nav> <div id="view"></div> <footer>Aldeia dos Crentes © 2026 — fé, anime e boas amizades </footer>
-</div> <!-- Player estilo Windows Media Player -->
-<div class="wmp-player" id="wmpPlayer"> <div class="wmp-titlebar" id="wmpTitlebar"> <span class="wmp-icon"></span> Windows Media Player — Rádio da Aldeia
-<button class="wmp-prev" id="wmpPrev">◀</button>
-<button class="wmp-play-btn" id="wmpPlay">▶</button>
-<button class="wmp-next" id="wmpNext">▶</button> <button class="wmp-vol" id="wmpMute" title="Mudo">🔊</button>
 </div>
-<audio id="wmpAudio" preload="none"></audio> <!-- Chat lateral -->
-<button class="chat-toggle" id="chatToggle"><span class="chat-badge" id="chatBadge" style="display:none;">novo</span></button>
-<div class="chat-panel" id="chatPanel"> <div class="chat-tabs"> <button class="active" data-ctab="amigos" id="ctabAmigos">Amigos</button> <button data-ctab="grupo" id="ctabGrupo">Grupo geral</button> </div> <div id="chatArea" style="flex:1; display:flex; flex-direction:column; min-height:0;"></div>
-</div> <script>
+
+<!-- Player estilo Windows Media Player -->
+<div class="wmp-player" id="wmpPlayer">
+
+  <div class="wmp-titlebar" id="wmpTitlebar">
+    <span class="wmp-icon"></span>
+    Windows Media Player — Rádio da Aldeia
+    <button class="wmp-min" id="wmpMin">–</button>
+  </div>
+
+  <div class="wmp-body">
+
+    <div class="wmp-wheel">
+      <button class="wmp-prev" id="wmpPrev">◀</button>
+      <button class="wmp-play-btn" id="wmpPlay">▶</button>
+      <button class="wmp-next" id="wmpNext">▶</button>
+    </div>
+
+    <div class="wmp-screen">
+
+      <div class="wmp-display">
+        <div class="wmp-status" id="wmpStatus">PARADO</div>
+        <div class="wmp-clock" id="wmpClock">00:00:00</div>
+        <div class="wmp-track" id="wmpTrack">
+          Rádio da Aldeia — ao vivo
+        </div>
+      </div>
+
+      <div class="wmp-progress">
+        <div class="wmp-progress-fill" id="wmpProgressFill"></div>
+      </div>
+
+      <div class="wmp-bottom-row">
+        <div class="wmp-stations">
+          <select id="wmpStations"></select>
+        </div>
+
+        <button
+          class="wmp-vol"
+          id="wmpMute"
+          title="Mudo"
+        >🔊</button>
+      </div>
+
+      <div class="wmp-volume-row">
+        <span style="font-size:0.65rem;">Volume</span>
+        <input
+          type="range"
+          id="wmpVolume"
+          min="0"
+          max="100"
+          value="70"
+        >
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<audio id="wmpAudio" preload="none"></audio>
 /* ============ Bolhas de fundo ============ */
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 (function(){
