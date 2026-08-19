@@ -1,483 +1,360 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aldeia dos Crentes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --sky-top:#4FC3F7;
-    --sky-mid:#8FE3FF;
-    --sky-bottom:#EAFBFF;
-    --aero-deep:#0B6E99;
-    --glass-white:rgba(255,255,255,0.55);
-    --glass-border:rgba(255,255,255,0.85);
-    --lime:#B7E877;
-    --lime-deep:#7FB544;
-    --sun:#FFD46B;
-    --holo-pink:#FFB3E6;
-    --holo-purple:#C9B3FF;
-    --ink:#0B3B52;
-    --ink-soft:#3E7089;
-    --msn-blue:#4E8FD6;
-    --msn-blue-dark:#2E6BAE;
+<style> :root{
+    --sky-top:#4FC3F7; --sky-mid:#8FE3FF; --sky-bottom:#EAFBFF; --aero-deep:#0B6E99;
+    --glass-white:rgba(255,255,255,0.55); --glass-border:rgba(255,255,255,0.85);
+    --lime:#B7E877; --lime-deep:#7FB544; --sun:#FFD46B;
+    --holo-pink:#FFB3E6; --holo-purple:#C9B3FF;
+    --ink:#0B3B52; --ink-soft:#3E7089;
+    --msn-blue:#4E8FD6; --msn-blue-dark:#2E6BAE;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
   body{
-    font-family:'Nunito', sans-serif;
-    color:var(--ink);
+    font-family:'Nunito', sans-serif; color:var(--ink);
     background:
       radial-gradient(ellipse 80% 50% at 50% -10%, #ffffff 0%, transparent 60%),
       linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 45%, var(--sky-bottom) 100%);
-    min-height:100vh;
-    overflow-x:hidden;
-    position:relative;
+    min-height:100vh; overflow-x:hidden; position:relative;
   }
   h1,h2,h3,.display{ font-family:'Baloo 2', sans-serif; }
-  button, input, textarea{ font-family:inherit; }
+  button, input, textarea, select{ font-family:inherit; }
 
-  /* ---------- Floating bubbles ---------- */
   .bubble-field{ position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
   .bubble{
     position:absolute; bottom:-120px; border-radius:50%;
-    background:
-      radial-gradient(circle at 32% 28%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.35) 22%, rgba(255,255,255,0.05) 45%, rgba(255,255,255,0) 60%),
+    background: radial-gradient(circle at 32% 28%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.35) 22%, rgba(255,255,255,0.05) 45%, rgba(255,255,255,0) 60%),
       radial-gradient(circle at 65% 70%, rgba(201,179,255,0.25), rgba(79,195,247,0.15) 60%, transparent 75%);
     box-shadow: inset 0 0 20px rgba(255,255,255,0.6), 0 10px 30px rgba(11,110,153,0.15);
     animation: rise linear infinite; opacity:0.85;
   }
-  @keyframes rise{
-    0%{ transform:translateY(0) translateX(0); }
-    50%{ transform:translateY(-55vh) translateX(20px); }
-    100%{ transform:translateY(-115vh) translateX(-10px); opacity:0; }
-  }
+  @keyframes rise{ 0%{transform:translateY(0) translateX(0);} 50%{transform:translateY(-55vh) translateX(20px);} 100%{transform:translateY(-115vh) translateX(-10px); opacity:0;} }
 
-  /* ---------- Holographic utilities ---------- */
-  .holo-border{
-    position:relative;
-    border-radius:26px;
+  .burst-bubble{
+    position:fixed; border-radius:50%; pointer-events:none; z-index:999;
+    background: radial-gradient(circle at 32% 28%, rgba(255,255,255,0.95), rgba(183,232,119,0.4) 40%, rgba(143,227,255,0.2) 70%, transparent 80%);
+    box-shadow: inset 0 0 10px rgba(255,255,255,0.7);
+    animation: burst-rise 1.1s ease-out forwards;
   }
+  @keyframes burst-rise{ 0%{ transform:translateY(0) scale(0.4); opacity:0.95; } 100%{ transform:translateY(-90px) scale(1); opacity:0; } }
+
+  .holo-border{ position:relative; border-radius:26px; }
   .holo-border::before{
-    content:"";
-    position:absolute; inset:-2px;
-    border-radius:inherit;
-    padding:2px;
+    content:""; position:absolute; inset:-2px; border-radius:inherit; padding:2px;
     background:conic-gradient(from var(--angle,0deg), #FFB3E6, #C9B3FF, #8FE3FF, #B7E877, #FFD46B, #FFB3E6);
     -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite:xor;
-    mask-composite:exclude;
-    animation: holo-spin 6s linear infinite;
-    opacity:0.9;
-    z-index:0;
-    pointer-events:none;
+    -webkit-mask-composite:xor; mask-composite:exclude;
+    animation: holo-spin 6s linear infinite; opacity:0.9; z-index:0; pointer-events:none;
   }
   @property --angle{ syntax:'<angle>'; initial-value:0deg; inherits:false; }
-  @keyframes holo-spin{ from{ --angle:0deg; } to{ --angle:360deg; } }
+  @keyframes holo-spin{ from{--angle:0deg;} to{--angle:360deg;} }
 
   .shine{ position:relative; overflow:hidden; }
   .shine::after{
-    content:"";
-    position:absolute; top:0; left:-150%; width:60%; height:100%;
+    content:""; position:absolute; top:0; left:-150%; width:60%; height:100%;
     background:linear-gradient(115deg, transparent 0%, rgba(255,255,255,0.55) 45%, transparent 90%);
-    transform:skewX(-18deg);
-    transition:left 0.7s ease;
+    transform:skewX(-18deg); transition:left 0.7s ease;
   }
   .shine:hover::after{ left:150%; }
 
-  /* ---------- Layout ---------- */
   .wrap{ position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:0 20px; }
 
-  /* ---------- MSN-style taskbar / nav ---------- */
   .msn-bar{
-    margin-top:18px;
-    display:flex; align-items:center; gap:10px;
-    padding:8px 10px;
-    border-radius:16px;
+    margin-top:18px; display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:16px;
     background:linear-gradient(180deg, rgba(255,255,255,0.75), rgba(255,255,255,0.4));
-    border:1px solid var(--glass-border);
-    backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
-    box-shadow: inset 0 1px 1px rgba(255,255,255,0.9), 0 8px 24px rgba(11,110,153,0.18);
-    flex-wrap:wrap;
+    border:1px solid var(--glass-border); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.9), 0 8px 24px rgba(11,110,153,0.18); flex-wrap:wrap;
   }
-  .brand{
-    display:flex; align-items:center; gap:10px;
-    font-family:'Baloo 2'; font-weight:800; font-size:1.15rem; color:var(--aero-deep);
-    padding:6px 10px;
-  }
+  .brand{ display:flex; align-items:center; gap:10px; font-family:'Baloo 2'; font-weight:800; font-size:1.1rem; color:var(--aero-deep); padding:6px 10px; }
   .logo-mark{
-    width:34px; height:34px; border-radius:50%; flex-shrink:0;
+    width:32px; height:32px; border-radius:50%; flex-shrink:0;
     background:radial-gradient(circle at 32% 28%, #ffffff 0%, #f0d9ff 20%, #C9B3FF 45%, var(--aero-deep) 100%);
     box-shadow: inset -4px -6px 10px rgba(11,110,153,0.35), 0 4px 10px rgba(11,110,153,0.3);
   }
-  .tabs{ display:flex; gap:6px; flex-wrap:wrap; margin-left:auto; }
+  .tabs{ display:flex; gap:5px; flex-wrap:wrap; margin-left:auto; }
   .tab-btn{
-    border:none; cursor:pointer;
-    padding:9px 16px; border-radius:12px;
-    font-weight:800; font-size:0.85rem; color:var(--ink-soft);
-    background:rgba(255,255,255,0.4);
-    transition:all 0.2s ease;
+    border:none; cursor:pointer; padding:8px 13px; border-radius:12px; font-weight:800; font-size:0.8rem; color:var(--ink-soft);
+    background:rgba(255,255,255,0.4); transition:all 0.2s ease;
   }
   .tab-btn:hover{ background:rgba(255,255,255,0.75); color:var(--aero-deep); }
-  .tab-btn.active{
-    color:#fff;
-    background:linear-gradient(180deg, var(--msn-blue), var(--msn-blue-dark));
-    box-shadow: inset 0 1px 1px rgba(255,255,255,0.6), 0 4px 10px rgba(30,90,150,0.35);
-  }
+  .tab-btn.active{ color:#fff; background:linear-gradient(180deg, var(--msn-blue), var(--msn-blue-dark)); box-shadow: inset 0 1px 1px rgba(255,255,255,0.6), 0 4px 10px rgba(30,90,150,0.35); }
 
-  /* ---------- MSN window panel ---------- */
   .msn-window{
-    border-radius:18px;
-    overflow:hidden;
-    background:var(--glass-white);
-    border:1px solid var(--glass-border);
+    border-radius:18px; overflow:hidden; background:var(--glass-white); border:1px solid var(--glass-border);
     backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
-    box-shadow: inset 0 1px 1px rgba(255,255,255,0.9), 0 16px 34px rgba(11,110,153,0.16);
-    margin-bottom:26px;
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.9), 0 16px 34px rgba(11,110,153,0.16); margin-bottom:24px;
   }
   .msn-titlebar{
-    display:flex; align-items:center; gap:10px;
-    padding:10px 14px;
-    background:linear-gradient(180deg, #7FC4F5, var(--msn-blue-dark));
-    color:#fff;
-    font-family:'Baloo 2'; font-weight:700; font-size:0.95rem;
-    text-shadow:0 1px 2px rgba(0,40,70,0.4);
+    display:flex; align-items:center; gap:10px; padding:10px 14px;
+    background:linear-gradient(180deg, #7FC4F5, var(--msn-blue-dark)); color:#fff;
+    font-family:'Baloo 2'; font-weight:700; font-size:0.92rem; text-shadow:0 1px 2px rgba(0,40,70,0.4);
   }
   .titlebar-dots{ display:flex; gap:6px; margin-left:auto; }
-  .titlebar-dots span{
-    width:11px; height:11px; border-radius:50%;
-    background:rgba(255,255,255,0.5);
-    box-shadow: inset 0 1px 1px rgba(255,255,255,0.7);
-  }
+  .titlebar-dots span{ width:11px; height:11px; border-radius:50%; background:rgba(255,255,255,0.5); box-shadow: inset 0 1px 1px rgba(255,255,255,0.7); }
   .titlebar-dots span:nth-child(1){ background:#FFB3B3; }
   .titlebar-dots span:nth-child(2){ background:#FFE29A; }
   .titlebar-dots span:nth-child(3){ background:#B7E877; }
-  .msn-body{ padding:22px; }
-  .status-dot{
-    width:9px; height:9px; border-radius:50%;
-    background:radial-gradient(circle at 30% 30%, #d4ffb0, var(--lime-deep));
-    box-shadow:0 0 8px var(--lime);
-    display:inline-block;
-  }
+  .msn-body{ padding:20px; }
+  .status-dot{ width:9px; height:9px; border-radius:50%; background:radial-gradient(circle at 30% 30%, #d4ffb0, var(--lime-deep)); box-shadow:0 0 8px var(--lime); display:inline-block; }
 
-  /* ---------- Glossy button ---------- */
   .btn-glossy{
-    position:relative; display:inline-flex; align-items:center; gap:8px;
-    padding:12px 24px; border-radius:999px; border:none; cursor:pointer;
-    font-family:'Baloo 2'; font-weight:700; font-size:0.95rem; color:#fff;
+    position:relative; display:inline-flex; align-items:center; gap:8px; padding:11px 22px; border-radius:999px; border:none; cursor:pointer;
+    font-family:'Baloo 2'; font-weight:700; font-size:0.9rem; color:#fff;
     background:linear-gradient(180deg, #8FE99A 0%, var(--lime) 45%, var(--lime-deep) 100%);
-    box-shadow: inset 0 2px 1px rgba(255,255,255,0.8), inset 0 -6px 10px rgba(65,120,30,0.35),
-      0 8px 18px rgba(60,130,30,0.35), 0 2px 0 var(--lime-deep);
-    text-shadow:0 1px 2px rgba(0,60,0,0.25);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-    overflow:hidden;
+    box-shadow: inset 0 2px 1px rgba(255,255,255,0.8), inset 0 -6px 10px rgba(65,120,30,0.35), 0 8px 18px rgba(60,130,30,0.35), 0 2px 0 var(--lime-deep);
+    text-shadow:0 1px 2px rgba(0,60,0,0.25); transition: transform 0.15s ease; overflow:hidden;
   }
-  .btn-glossy::after{
-    content:""; position:absolute; top:6%; left:8%; width:60%; height:38%; border-radius:50%;
-    background:linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0)); filter:blur(1px); pointer-events:none;
-  }
+  .btn-glossy::after{ content:""; position:absolute; top:6%; left:8%; width:60%; height:38%; border-radius:50%; background:linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0)); filter:blur(1px); pointer-events:none; }
   .btn-glossy:hover{ transform:translateY(-3px); }
   .btn-glossy:active{ transform:translateY(1px); }
-  .btn-glossy.blue{
-    background:linear-gradient(180deg, #7FDDFF 0%, var(--sky-top) 45%, var(--aero-deep) 100%);
-    box-shadow: inset 0 2px 1px rgba(255,255,255,0.8), inset 0 -6px 10px rgba(6,70,100,0.4),
-      0 8px 18px rgba(6,70,100,0.3), 0 2px 0 var(--aero-deep);
-    text-shadow:0 1px 2px rgba(0,30,50,0.35);
-  }
-  .btn-glossy.purple{
-    background:linear-gradient(180deg, #E0CFFF 0%, var(--holo-purple) 45%, #8F6FE0 100%);
-    box-shadow: inset 0 2px 1px rgba(255,255,255,0.8), inset 0 -6px 10px rgba(90,50,150,0.35),
-      0 8px 18px rgba(90,50,150,0.3), 0 2px 0 #8F6FE0;
-    text-shadow:0 1px 2px rgba(50,10,90,0.3);
-  }
-  .btn-glossy.small{ padding:8px 16px; font-size:0.8rem; }
+  .btn-glossy.blue{ background:linear-gradient(180deg, #7FDDFF 0%, var(--sky-top) 45%, var(--aero-deep) 100%); box-shadow: inset 0 2px 1px rgba(255,255,255,0.8), inset 0 -6px 10px rgba(6,70,100,0.4), 0 8px 18px rgba(6,70,100,0.3), 0 2px 0 var(--aero-deep); text-shadow:0 1px 2px rgba(0,30,50,0.35); }
+  .btn-glossy.purple{ background:linear-gradient(180deg, #E0CFFF 0%, var(--holo-purple) 45%, #8F6FE0 100%); box-shadow: inset 0 2px 1px rgba(255,255,255,0.8), inset 0 -6px 10px rgba(90,50,150,0.35), 0 8px 18px rgba(90,50,150,0.3), 0 2px 0 #8F6FE0; text-shadow:0 1px 2px rgba(50,10,90,0.3); }
+  .btn-glossy.pink{ background:linear-gradient(180deg, #FFE0F3 0%, var(--holo-pink) 45%, #E066B8 100%); box-shadow: inset 0 2px 1px rgba(255,255,255,0.8), inset 0 -6px 10px rgba(150,40,110,0.35), 0 8px 18px rgba(150,40,110,0.3), 0 2px 0 #E066B8; text-shadow:0 1px 2px rgba(90,10,60,0.3); }
+  .btn-glossy.small{ padding:7px 14px; font-size:0.78rem; }
   .btn-glossy:disabled{ opacity:0.55; cursor:not-allowed; transform:none; }
+  .btn-ghost{
+    border:1px solid var(--glass-border); background:rgba(255,255,255,0.4); cursor:pointer; border-radius:999px;
+    padding:7px 14px; font-weight:800; font-size:0.78rem; color:var(--ink-soft);
+  }
+  .btn-ghost.liked{ background:linear-gradient(180deg, #FFE0F3, var(--holo-pink)); color:#7a2c58; }
 
-  /* ---------- Hero ---------- */
-  .hero{ display:grid; grid-template-columns:1.1fr 0.9fr; align-items:center; gap:36px; padding:46px 0 30px; }
-  .eyebrow{
-    display:inline-block; padding:6px 16px; border-radius:999px;
-    background:var(--glass-white); border:1px solid var(--glass-border); backdrop-filter:blur(10px);
-    font-weight:800; font-size:0.78rem; color:var(--aero-deep); margin-bottom:16px;
-  }
-  .hero h1{ font-size:2.9rem; line-height:1.08; font-weight:800; color:var(--aero-deep); text-shadow:0 2px 0 rgba(255,255,255,0.6); margin-bottom:16px; }
-  .hero h1 span{
-    background:linear-gradient(90deg, #FFB3E6, #C9B3FF, #8FE3FF, #B7E877);
-    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
-    background-size:300% auto; animation: holo-text 5s linear infinite;
-  }
+  .hero{ display:grid; grid-template-columns:1.1fr 0.9fr; align-items:center; gap:32px; padding:40px 0 26px; }
+  .eyebrow{ display:inline-block; padding:6px 16px; border-radius:999px; background:var(--glass-white); border:1px solid var(--glass-border); backdrop-filter:blur(10px); font-weight:800; font-size:0.75rem; color:var(--aero-deep); margin-bottom:14px; }
+  .hero h1{ font-size:2.6rem; line-height:1.08; font-weight:800; color:var(--aero-deep); text-shadow:0 2px 0 rgba(255,255,255,0.6); margin-bottom:14px; }
+  .hero h1 span{ background:linear-gradient(90deg, #FFB3E6, #C9B3FF, #8FE3FF, #B7E877); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; background-size:300% auto; animation: holo-text 5s linear infinite; }
   @keyframes holo-text{ to{ background-position:300% center; } }
-  .hero p{ font-size:1.08rem; color:var(--ink-soft); max-width:480px; margin-bottom:26px; font-weight:600; }
-  .hero-actions{ display:flex; gap:14px; flex-wrap:wrap; align-items:center; }
-  .online-pill{
-    display:inline-flex; align-items:center; gap:8px; padding:9px 16px; border-radius:999px;
-    background:var(--glass-white); border:1px solid var(--glass-border); backdrop-filter:blur(10px);
-    font-weight:800; font-size:0.85rem; color:var(--ink);
-  }
-  .orb-stage{ position:relative; height:320px; display:flex; align-items:center; justify-content:center; }
-  .orb{
-    width:230px; height:230px; border-radius:50%;
-    background: radial-gradient(circle at 30% 25%, #ffffff 0%, #f5e3ff 15%, #C9B3FF 35%, var(--sky-top) 65%, var(--aero-deep) 100%);
-    box-shadow: inset -20px -30px 50px rgba(6,70,100,0.4), inset 10px 10px 30px rgba(255,255,255,0.6), 0 30px 60px rgba(6,70,100,0.3);
-    position:relative; animation: float 6s ease-in-out infinite;
-  }
-  .orb::before{
-    content:""; position:absolute; top:14%; left:20%; width:35%; height:22%; border-radius:50%;
-    background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0)); filter:blur(2px);
-  }
-  .orb::after{ content:"✞"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:3rem; color:rgba(255,255,255,0.75); text-shadow:0 2px 8px rgba(6,70,100,0.4); }
-  .orb-ring{ position:absolute; width:290px; height:290px; border-radius:50%; border:2px solid rgba(255,255,255,0.6); animation: spin 18s linear infinite; }
+  .hero p{ font-size:1.02rem; color:var(--ink-soft); max-width:480px; margin-bottom:22px; font-weight:600; }
+  .hero-actions{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+  .online-pill{ display:inline-flex; align-items:center; gap:8px; padding:9px 16px; border-radius:999px; background:var(--glass-white); border:1px solid var(--glass-border); backdrop-filter:blur(10px); font-weight:800; font-size:0.82rem; color:var(--ink); }
+  .orb-stage{ position:relative; height:280px; display:flex; align-items:center; justify-content:center; }
+  .orb{ width:200px; height:200px; border-radius:50%; background: radial-gradient(circle at 30% 25%, #ffffff 0%, #f5e3ff 15%, #C9B3FF 35%, var(--sky-top) 65%, var(--aero-deep) 100%); box-shadow: inset -20px -30px 50px rgba(6,70,100,0.4), inset 10px 10px 30px rgba(255,255,255,0.6), 0 30px 60px rgba(6,70,100,0.3); position:relative; animation: float 6s ease-in-out infinite; }
+  .orb::before{ content:""; position:absolute; top:14%; left:20%; width:35%; height:22%; border-radius:50%; background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0)); filter:blur(2px); }
+  .orb::after{ content:""; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:2.6rem; color:rgba(255,255,255,0.75); text-shadow:0 2px 8px rgba(6,70,100,0.4); }
+  .orb-ring{ position:absolute; width:250px; height:250px; border-radius:50%; border:2px solid rgba(255,255,255,0.6); animation: spin 18s linear infinite; }
   .orb-ring::before, .orb-ring::after{ content:""; position:absolute; width:14px; height:14px; border-radius:50%; background:radial-gradient(circle at 30% 30%, #fff, var(--holo-purple)); box-shadow:0 0 10px rgba(201,179,255,0.8); }
   .orb-ring::before{ top:-7px; left:50%; margin-left:-7px; }
   .orb-ring::after{ bottom:16px; right:0; }
   @keyframes float{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-16px); } }
   @keyframes spin{ from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
 
-  .section-head{ margin-bottom:24px; }
-  .section-head h2{ font-size:1.6rem; color:var(--aero-deep); margin-bottom:6px; font-weight:800; }
-  .section-head p{ color:var(--ink-soft); font-weight:600; font-size:0.92rem; }
+  .section-head{ margin-bottom:20px; }
+  .section-head h2{ font-size:1.5rem; color:var(--aero-deep); margin-bottom:5px; font-weight:800; }
+  .section-head p{ color:var(--ink-soft); font-weight:600; font-size:0.9rem; }
 
-  /* ---------- Cards ---------- */
-  .grid-3{ display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; }
-  .grid-2{ display:grid; grid-template-columns:repeat(2, 1fr); gap:20px; }
+  .grid-3{ display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; }
+  .grid-2{ display:grid; grid-template-columns:repeat(2, 1fr); gap:18px; }
   .glass-card{
-    padding:22px 20px; border-radius:22px;
-    background:rgba(255,255,255,0.55); border:1px solid var(--glass-border);
+    padding:20px 18px; border-radius:22px; background:rgba(255,255,255,0.55); border:1px solid var(--glass-border);
     backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
     box-shadow: inset 0 1px 1px rgba(255,255,255,0.9), 0 12px 26px rgba(11,110,153,0.12);
-    transition:transform 0.25s ease, box-shadow 0.25s ease;
-    position:relative; overflow:hidden;
+    transition:transform 0.25s ease; position:relative; overflow:hidden;
   }
-  .glass-card::before{
-    content:""; position:absolute; top:0; left:0; right:0; height:45%;
-    background:linear-gradient(180deg, rgba(255,255,255,0.5), rgba(255,255,255,0)); pointer-events:none;
-  }
+  .glass-card::before{ content:""; position:absolute; top:0; left:0; right:0; height:45%; background:linear-gradient(180deg, rgba(255,255,255,0.5), rgba(255,255,255,0)); pointer-events:none; }
   .glass-card:hover{ transform:translateY(-6px); }
-  .event-thumb{
-    height:120px; border-radius:14px; margin-bottom:14px;
-    display:flex; align-items:center; justify-content:center; font-size:2.4rem;
-    background:linear-gradient(135deg, #FFD6F0, #D6C9FF, #C7EFFF);
-  }
-  .glass-card h3{ font-size:1.05rem; color:var(--aero-deep); margin-bottom:6px; font-weight:700; }
-  .glass-card .meta{ font-size:0.78rem; color:var(--ink-soft); font-weight:800; margin-bottom:8px; }
-  .glass-card p{ color:var(--ink-soft); font-size:0.9rem; font-weight:600; line-height:1.5; }
+  .event-thumb{ height:110px; border-radius:14px; margin-bottom:12px; display:flex; align-items:center; justify-content:center; font-size:2.2rem; background:linear-gradient(135deg, #FFD6F0, #D6C9FF, #C7EFFF); }
+  .glass-card h3{ font-size:1rem; color:var(--aero-deep); margin-bottom:5px; font-weight:700; }
+  .glass-card .meta{ font-size:0.75rem; color:var(--ink-soft); font-weight:800; margin-bottom:7px; }
+  .glass-card p{ color:var(--ink-soft); font-size:0.87rem; font-weight:600; line-height:1.5; }
 
-  .video-card{
-    display:flex; gap:14px; padding:16px; border-radius:18px;
-    background:rgba(255,255,255,0.5); border:1px solid var(--glass-border); backdrop-filter:blur(10px);
-    align-items:center;
-  }
-  .video-thumb{
-    width:90px; height:64px; border-radius:12px; flex-shrink:0;
-    display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:#fff;
-    background:linear-gradient(135deg, #FF6B6B, #C9B3FF);
-  }
-  .video-card .name{ font-weight:800; color:var(--aero-deep); font-size:0.95rem; }
-  .video-card .desc{ color:var(--ink-soft); font-size:0.82rem; font-weight:600; }
+  .video-card{ display:flex; gap:14px; padding:14px; border-radius:18px; background:rgba(255,255,255,0.5); border:1px solid var(--glass-border); backdrop-filter:blur(10px); align-items:center; }
+  .video-thumb{ width:80px; height:58px; border-radius:12px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:1.4rem; color:#fff; background:linear-gradient(135deg, #FF6B6B, #C9B3FF); }
+  .video-card .name{ font-weight:800; color:var(--aero-deep); font-size:0.92rem; }
+  .video-card .desc{ color:var(--ink-soft); font-size:0.8rem; font-weight:600; }
+  .video-card a.link{ font-size:0.75rem; font-weight:800; color:var(--msn-blue-dark); text-decoration:none; }
 
-  /* ---------- Polls ---------- */
-  .poll{ margin-bottom:26px; }
-  .poll:last-child{ margin-bottom:0; }
-  .poll h4{ color:var(--aero-deep); font-size:1rem; margin-bottom:12px; font-weight:800; }
-  .poll-opt{ margin-bottom:10px; }
+  /* ---------- Feed (novidades / fórum) ---------- */
+  .composer{ display:flex; flex-direction:column; gap:8px; margin-bottom:18px; }
+  .composer-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .composer select{ padding:8px 10px; border-radius:10px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.7); font-weight:700; font-size:0.82rem; }
+  .composer textarea{ width:100%; padding:10px 14px; border-radius:14px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.7); font-weight:600; font-size:0.9rem; min-height:56px; resize:vertical; }
+  .poll-builder{ display:none; flex-direction:column; gap:6px; margin-top:6px; }
+  .poll-builder input{ padding:8px 12px; border-radius:10px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.7); font-weight:600; font-size:0.82rem; }
+
+  .post{ padding:16px; border-radius:18px; background:rgba(255,255,255,0.5); border:1px solid var(--glass-border); backdrop-filter:blur(10px); margin-bottom:14px; }
+  .post-head{ display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+  .post-head .pauthor{ font-weight:800; color:var(--aero-deep); font-size:0.9rem; cursor:pointer; }
+  .post-head .ptag{ font-size:0.68rem; font-weight:800; color:#fff; padding:2px 9px; border-radius:999px; background:var(--msn-blue); }
+  .post-head .ptag.desabafo{ background:#C97FE0; }
+  .post-head .ptag.enquete{ background:var(--lime-deep); }
+  .post-head .ptime{ margin-left:auto; font-size:0.72rem; color:var(--ink-soft); font-weight:700; }
+  .post-text{ font-weight:600; color:var(--ink); font-size:0.92rem; line-height:1.5; margin-bottom:10px; }
+  .post-actions{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .post-comments{ margin-top:10px; padding-top:10px; border-top:1px dashed var(--glass-border); }
+  .comment{ font-size:0.83rem; font-weight:600; color:var(--ink-soft); margin-bottom:5px; }
+  .comment b{ color:var(--aero-deep); }
+  .comment-box{ display:flex; gap:6px; margin-top:8px; }
+  .comment-box input{ flex:1; padding:8px 12px; border-radius:999px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.7); font-weight:600; font-size:0.8rem; }
+
+  /* ---------- Enquetes dentro do post ---------- */
+  .poll-opt{ margin-bottom:8px; }
   .poll-opt button{
-    width:100%; text-align:left; border:none; cursor:pointer;
-    padding:10px 14px; border-radius:12px;
-    background:rgba(255,255,255,0.55); border:1px solid var(--glass-border);
-    font-weight:700; color:var(--ink); font-size:0.88rem;
-    display:flex; justify-content:space-between; align-items:center; gap:10px;
-    transition:background 0.2s ease;
-    position:relative; overflow:hidden;
+    width:100%; text-align:left; border:none; cursor:pointer; padding:9px 12px; border-radius:12px;
+    background:rgba(255,255,255,0.55); border:1px solid var(--glass-border); font-weight:700; color:var(--ink); font-size:0.85rem;
+    display:flex; justify-content:space-between; align-items:center; gap:10px; position:relative; overflow:hidden;
   }
-  .poll-opt button:hover{ background:rgba(255,255,255,0.85); }
-  .poll-opt .bar{
-    position:absolute; left:0; top:0; bottom:0;
-    background:linear-gradient(90deg, rgba(183,232,119,0.55), rgba(143,227,255,0.4));
-    z-index:0; transition:width 0.4s ease;
-  }
+  .poll-opt .bar{ position:absolute; left:0; top:0; bottom:0; background:linear-gradient(90deg, rgba(183,232,119,0.55), rgba(143,227,255,0.4)); z-index:0; transition:width 0.4s ease; }
   .poll-opt .label{ position:relative; z-index:1; }
-  .poll-opt .count{ position:relative; z-index:1; font-size:0.78rem; color:var(--ink-soft); }
+  .poll-opt .count{ position:relative; z-index:1; font-size:0.72rem; color:var(--ink-soft); }
   .poll-opt button.voted{ outline:2px solid var(--lime-deep); }
 
   /* ---------- Comunidade / perfis ---------- */
   .login-box{ max-width:420px; }
   .field{ margin-bottom:14px; }
-  .field label{ display:block; font-weight:800; font-size:0.82rem; color:var(--aero-deep); margin-bottom:6px; }
-  .field input, .field textarea, .field select{
-    width:100%; padding:10px 14px; border-radius:12px; border:1px solid var(--glass-border);
-    background:rgba(255,255,255,0.7); font-weight:700; color:var(--ink); font-size:0.9rem;
-  }
+  .field label{ display:block; font-weight:800; font-size:0.8rem; color:var(--aero-deep); margin-bottom:6px; }
+  .field input, .field textarea, .field select{ width:100%; padding:10px 14px; border-radius:12px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.7); font-weight:700; color:var(--ink); font-size:0.88rem; }
   .field textarea{ resize:vertical; min-height:70px; font-weight:600; }
+  .field small{ display:block; margin-top:4px; font-weight:600; color:var(--ink-soft); font-size:0.72rem; }
 
-  .profile-header{ display:flex; gap:18px; align-items:center; margin-bottom:18px; flex-wrap:wrap; }
-  .avatar-big{
-    width:76px; height:76px; border-radius:50%; flex-shrink:0;
-    display:flex; align-items:center; justify-content:center; font-size:2.2rem;
-    background:radial-gradient(circle at 30% 25%, #fff, #D6C9FF 40%, var(--aero-deep) 100%);
-    box-shadow: inset -6px -8px 12px rgba(6,70,100,0.3), 0 8px 18px rgba(6,70,100,0.25);
-  }
-  .profile-name{ font-family:'Baloo 2'; font-weight:800; font-size:1.3rem; color:var(--aero-deep); }
-  .profile-tag{ color:var(--ink-soft); font-weight:700; font-size:0.85rem; }
-  .profile-facts{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
-  .fact-pill{
-    padding:6px 12px; border-radius:999px; background:rgba(255,255,255,0.6);
-    border:1px solid var(--glass-border); font-weight:700; font-size:0.78rem; color:var(--ink);
-  }
+  .profile-header{ display:flex; gap:16px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
+  .avatar-big{ width:74px; height:74px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:2.1rem; overflow:hidden;
+    background:radial-gradient(circle at 30% 25%, #fff, #D6C9FF 40%, var(--aero-deep) 100%); box-shadow: inset -6px -8px 12px rgba(6,70,100,0.3), 0 8px 18px rgba(6,70,100,0.25); }
+  .avatar-big img{ width:100%; height:100%; object-fit:cover; }
+  .profile-name{ font-family:'Baloo 2'; font-weight:800; font-size:1.25rem; color:var(--aero-deep); }
+  .profile-tag{ color:var(--ink-soft); font-weight:700; font-size:0.83rem; }
+  .profile-facts{ display:flex; gap:8px; flex-wrap:wrap; margin-top:9px; }
+  .fact-pill{ padding:5px 11px; border-radius:999px; background:rgba(255,255,255,0.6); border:1px solid var(--glass-border); font-weight:700; font-size:0.75rem; color:var(--ink); }
+  .badge-pill{ padding:5px 11px; border-radius:999px; background:linear-gradient(180deg, #FFE9B3, var(--sun)); font-weight:800; font-size:0.75rem; color:#6b4900; }
 
-  .member-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; margin-top:8px; }
-  .member-chip{
-    display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:14px;
-    background:rgba(255,255,255,0.5); border:1px solid var(--glass-border); cursor:pointer;
-    transition:background 0.2s ease;
-  }
+  .badge-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; margin-top:6px; }
+  .badge-btn{ border:none; cursor:pointer; padding:9px 6px; border-radius:12px; background:rgba(255,255,255,0.5); border:1px solid var(--glass-border); font-weight:700; font-size:0.72rem; text-align:center; }
+  .badge-btn small{ display:block; font-weight:700; color:var(--ink-soft); font-size:0.68rem; }
+  .badge-btn.voted{ background:linear-gradient(180deg, #E0F7D0, var(--lime)); }
+
+  .member-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-top:8px; }
+  .member-chip{ display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:14px; background:rgba(255,255,255,0.5); border:1px solid var(--glass-border); cursor:pointer; transition:background 0.2s ease; }
   .member-chip:hover{ background:rgba(255,255,255,0.85); }
-  .avatar-sm{
-    width:36px; height:36px; border-radius:50%; flex-shrink:0;
-    display:flex; align-items:center; justify-content:center; font-size:1.1rem;
-    background:radial-gradient(circle at 30% 25%, #fff, #C9E7FF 40%, var(--aero-deep) 100%);
-  }
-  .member-chip .mname{ font-weight:800; font-size:0.85rem; color:var(--ink); }
-  .member-chip .mstatus{ font-size:0.72rem; color:var(--ink-soft); font-weight:700; }
+  .avatar-sm{ width:34px; height:34px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:1rem; overflow:hidden; background:radial-gradient(circle at 30% 25%, #fff, #C9E7FF 40%, var(--aero-deep) 100%); }
+  .avatar-sm img{ width:100%; height:100%; object-fit:cover; }
+  .member-chip .mname{ font-weight:800; font-size:0.83rem; color:var(--ink); }
+  .member-chip .mstatus{ font-size:0.7rem; color:var(--ink-soft); font-weight:700; }
 
-  .recado{
-    padding:12px 14px; border-radius:14px; background:rgba(255,255,255,0.5);
-    border:1px solid var(--glass-border); margin-bottom:10px;
-  }
-  .recado .from{ font-weight:800; color:var(--aero-deep); font-size:0.82rem; }
-  .recado .text{ font-weight:600; color:var(--ink); font-size:0.88rem; margin-top:2px; }
+  .recado{ padding:11px 13px; border-radius:14px; background:rgba(255,255,255,0.5); border:1px solid var(--glass-border); margin-bottom:9px; }
+  .recado .from{ font-weight:800; color:var(--aero-deep); font-size:0.8rem; }
+  .recado .text{ font-weight:600; color:var(--ink); font-size:0.86rem; margin-top:2px; }
 
-  .divider{ height:1px; background:linear-gradient(90deg, transparent, var(--glass-border), transparent); margin:20px 0; }
+  .history-item{ font-size:0.82rem; font-weight:600; color:var(--ink-soft); margin-bottom:7px; padding-left:10px; border-left:3px solid var(--holo-purple); }
+  .history-item b{ color:var(--aero-deep); }
 
-  .small-note{ font-size:0.78rem; color:var(--ink-soft); font-weight:700; }
+  .divider{ height:1px; background:linear-gradient(90deg, transparent, var(--glass-border), transparent); margin:18px 0; }
+  .small-note{ font-size:0.76rem; color:var(--ink-soft); font-weight:700; }
 
-  footer{ text-align:center; padding:30px 0 46px; color:var(--ink-soft); font-weight:700; font-size:0.85rem; padding-bottom:110px; }
+  /* ---------- Bíblia ---------- */
+  .bible-toolbar{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+  .bible-toolbar select{ padding:9px 12px; border-radius:12px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.7); font-weight:700; font-size:0.82rem; }
+  .verse-card{ padding:16px; border-radius:16px; background:rgba(255,255,255,0.55); border:1px solid var(--glass-border); margin-bottom:12px; }
+  .verse-ref{ font-weight:800; color:var(--aero-deep); font-size:0.85rem; margin-bottom:6px; }
+  .verse-text{ font-weight:600; color:var(--ink); font-size:0.95rem; line-height:1.6; padding:3px 4px; border-radius:6px; }
+  .verse-text.mark-yellow{ background:rgba(255,212,107,0.55); }
+  .verse-text.mark-green{ background:rgba(183,232,119,0.55); }
+  .verse-text.mark-pink{ background:rgba(255,179,230,0.55); }
+  .verse-text.mark-blue{ background:rgba(143,227,255,0.55); }
+  .verse-actions{ display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; align-items:center; }
+  .mark-dot{ width:20px; height:20px; border-radius:50%; border:2px solid #fff; cursor:pointer; box-shadow:0 0 0 1px var(--glass-border); }
+  .mark-dot.yellow{ background:var(--sun); } .mark-dot.green{ background:var(--lime); } .mark-dot.pink{ background:var(--holo-pink); } .mark-dot.blue{ background:var(--sky-top); }
+  .verse-note{ margin-top:8px; }
+  .verse-note textarea{ width:100%; padding:8px 12px; border-radius:10px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.6); font-weight:600; font-size:0.8rem; min-height:44px; }
+  .votd{ padding:20px; border-radius:18px; background:linear-gradient(135deg, #FFE9B3, #FFD6F0, #D6C9FF); margin-bottom:20px; text-align:center; }
+  .votd .verse-ref{ color:#6b3d00; }
+  .votd .verse-text{ font-size:1.05rem; color:#3a2200; background:none; }
 
-  /* ---------- Rádio player persistente (estilo Windows Media Player) ---------- */
-  .radio-player{
-    position:fixed; left:20px; bottom:20px; z-index:50;
-    width:280px;
-    border-radius:16px;
-    overflow:hidden;
-    background:rgba(255,255,255,0.6);
-    border:1px solid var(--glass-border);
-    backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
-    box-shadow: inset 0 1px 1px rgba(255,255,255,0.9), 0 16px 34px rgba(11,110,153,0.28);
-    transition:width 0.25s ease, height 0.25s ease;
+  /* ---------- Chat lateral ---------- */
+  .chat-toggle{
+    position:fixed; right:20px; bottom:20px; z-index:50; width:54px; height:54px; border-radius:50%; border:none; cursor:pointer;
+    background:linear-gradient(180deg, #7FDDFF, var(--aero-deep)); color:#fff; font-size:1.4rem;
+    box-shadow: inset 0 2px 1px rgba(255,255,255,0.7), 0 10px 24px rgba(6,70,100,0.35);
   }
-  .radio-player.collapsed .rp-body{ display:none; }
-  .radio-player.collapsed{ width:220px; }
-  .rp-titlebar{
-    display:flex; align-items:center; gap:8px;
-    padding:8px 10px;
-    background:linear-gradient(180deg, #7FC4F5, var(--msn-blue-dark));
-    color:#fff; font-family:'Baloo 2'; font-weight:700; font-size:0.82rem;
-    text-shadow:0 1px 2px rgba(0,40,70,0.4);
-    cursor:pointer; user-select:none;
+  .chat-badge{ position:absolute; top:-4px; right:-4px; background:#E0517A; color:#fff; font-size:0.65rem; font-weight:800; border-radius:999px; padding:2px 6px; }
+  .chat-panel{
+    position:fixed; right:20px; bottom:86px; z-index:50; width:320px; max-height:70vh; display:none; flex-direction:column;
+    border-radius:16px; overflow:hidden; background:rgba(255,255,255,0.65); border:1px solid var(--glass-border);
+    backdrop-filter:blur(16px); box-shadow: inset 0 1px 1px rgba(255,255,255,0.9), 0 16px 34px rgba(11,110,153,0.28);
   }
-  .rp-titlebar .rp-eq{ display:flex; align-items:flex-end; gap:2px; height:14px; }
-  .rp-titlebar .rp-eq span{
-    width:3px; background:#fff; border-radius:1px;
-    animation: eq 0.9s ease-in-out infinite;
-    opacity:0.9;
-  }
-  .rp-titlebar .rp-eq span:nth-child(1){ height:40%; animation-delay:0s; }
-  .rp-titlebar .rp-eq span:nth-child(2){ height:90%; animation-delay:0.15s; }
-  .rp-titlebar .rp-eq span:nth-child(3){ height:60%; animation-delay:0.3s; }
-  .rp-titlebar .rp-eq span:nth-child(4){ height:100%; animation-delay:0.45s; }
-  .radio-player:not(.playing) .rp-eq span{ animation-play-state:paused; height:20% !important; }
-  @keyframes eq{ 0%,100%{ transform:scaleY(0.4); } 50%{ transform:scaleY(1); } }
-  .rp-min{ margin-left:auto; background:rgba(255,255,255,0.25); border:none; color:#fff; width:20px; height:20px; border-radius:6px; cursor:pointer; font-size:0.75rem; line-height:1; }
-  .rp-body{ padding:14px; }
-  .rp-now{ font-weight:800; color:var(--aero-deep); font-size:0.85rem; margin-bottom:2px; }
-  .rp-station-name{ font-weight:700; color:var(--ink-soft); font-size:0.75rem; margin-bottom:10px; }
-  .rp-controls{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
-  .rp-play{
-    width:42px; height:42px; border-radius:50%; border:none; cursor:pointer; flex-shrink:0;
-    display:flex; align-items:center; justify-content:center; font-size:1.1rem; color:#fff;
-    background:linear-gradient(180deg, #8FE99A 0%, var(--lime) 45%, var(--lime-deep) 100%);
-    box-shadow: inset 0 2px 1px rgba(255,255,255,0.8), inset 0 -6px 8px rgba(65,120,30,0.35), 0 6px 14px rgba(60,130,30,0.35);
-  }
-  .rp-volume{ flex:1; display:flex; align-items:center; gap:6px; }
-  .rp-volume input[type=range]{ flex:1; accent-color: var(--aero-deep); }
-  .rp-stations{ display:flex; flex-direction:column; gap:6px; }
-  .rp-station-btn{
-    text-align:left; border:none; cursor:pointer; padding:7px 10px; border-radius:10px;
-    background:rgba(255,255,255,0.5); font-weight:700; font-size:0.75rem; color:var(--ink);
-  }
-  .rp-station-btn.active{ background:linear-gradient(180deg, var(--msn-blue), var(--msn-blue-dark)); color:#fff; }
-  .rp-status{ font-size:0.7rem; color:var(--ink-soft); font-weight:700; margin-top:8px; }
+  .chat-panel.open{ display:flex; }
+  .chat-tabs{ display:flex; background:linear-gradient(180deg, #7FC4F5, var(--msn-blue-dark)); }
+  .chat-tabs button{ flex:1; border:none; background:transparent; color:#fff; font-weight:800; font-size:0.75rem; padding:9px; cursor:pointer; opacity:0.75; }
+  .chat-tabs button.active{ opacity:1; border-bottom:2px solid #fff; }
+  .chat-list{ flex:1; overflow-y:auto; padding:10px; }
+  .chat-friend{ display:flex; align-items:center; gap:8px; padding:8px; border-radius:10px; cursor:pointer; }
+  .chat-friend:hover{ background:rgba(255,255,255,0.5); }
+  .chat-thread{ flex:1; overflow-y:auto; padding:10px; display:flex; flex-direction:column; gap:6px; }
+  .chat-msg{ max-width:80%; padding:7px 11px; border-radius:12px; font-size:0.8rem; font-weight:600; background:rgba(255,255,255,0.7); align-self:flex-start; }
+  .chat-msg.mine{ align-self:flex-end; background:linear-gradient(180deg, #B7E877, var(--lime-deep)); color:#fff; }
+  .chat-msg .who{ font-size:0.65rem; font-weight:800; opacity:0.7; display:block; margin-bottom:2px; }
+  .chat-input-row{ display:flex; gap:6px; padding:8px; border-top:1px solid var(--glass-border); }
+  .chat-input-row input{ flex:1; padding:8px 12px; border-radius:999px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.8); font-weight:600; font-size:0.8rem; }
+  .chat-input-row button{ border:none; border-radius:50%; width:32px; height:32px; background:var(--aero-deep); color:#fff; cursor:pointer; }
+  .chat-back{ background:none; border:none; color:var(--aero-deep); font-weight:800; cursor:pointer; padding:8px 10px; font-size:0.8rem; }
+
+  /* ---------- Rádio - skin estilo Windows Media Player ---------- */
+  .wmp-player{ position:fixed; left:20px; bottom:20px; z-index:50; width:300px; border-radius:14px; overflow:hidden;
+    background:linear-gradient(180deg, #EAF6FF, #C9E7FA); border:2px solid #ffffffcc;
+    box-shadow: 0 0 0 1px #6fa8d0, 0 16px 34px rgba(11,110,153,0.35); transition:width 0.25s ease; }
+  .wmp-player.collapsed .wmp-body{ display:none; }
+  .wmp-titlebar{ display:flex; align-items:center; gap:8px; padding:6px 10px; cursor:pointer; user-select:none;
+    background:linear-gradient(180deg, #BEE0FA, #6FA8D0); color:#0B3B52; font-weight:800; font-size:0.78rem; }
+  .wmp-titlebar .wmp-icon{ width:14px; height:14px; border-radius:3px; background:linear-gradient(135deg,#FFD46B,#FF9B4E); }
+  .wmp-titlebar .wmp-min{ margin-left:auto; background:rgba(255,255,255,0.5); border:none; width:18px; height:18px; border-radius:4px; cursor:pointer; font-size:0.7rem; }
+  .wmp-body{ padding:12px; display:flex; gap:10px; }
+  .wmp-wheel{ position:relative; width:90px; height:90px; border-radius:50%; flex-shrink:0;
+    background:radial-gradient(circle at 35% 30%, #fff, #dbeeff 40%, #9cc9ec 75%, #6fa8d0 100%);
+    box-shadow: inset -6px -8px 14px rgba(20,80,120,0.35), inset 6px 6px 10px rgba(255,255,255,0.7), 0 4px 10px rgba(20,80,120,0.25); }
+  .wmp-wheel button{ position:absolute; border:none; background:none; cursor:pointer; color:#2E6BAE; }
+  .wmp-play-btn{ top:50%; left:50%; transform:translate(-50%,-50%); width:36px; height:36px; border-radius:50%; font-size:1.1rem;
+    background:radial-gradient(circle at 35% 30%, #fff, #eaf6ff); box-shadow:0 3px 8px rgba(20,80,120,0.35); display:flex; align-items:center; justify-content:center; }
+  .wmp-prev{ top:50%; left:6px; transform:translateY(-50%); font-size:0.85rem; }
+  .wmp-next{ top:50%; right:6px; transform:translateY(-50%); font-size:0.85rem; }
+  .wmp-screen{ flex:1; min-width:0; }
+  .wmp-display{ background:linear-gradient(180deg, #0B3B52, #04202f); border-radius:8px; padding:8px 10px; margin-bottom:8px; }
+  .wmp-status{ color:#8fe3ff; font-size:0.68rem; font-weight:800; letter-spacing:0.04em; }
+  .wmp-clock{ color:#eafbff; font-family:'Baloo 2'; font-size:1.15rem; font-weight:700; letter-spacing:0.02em; }
+  .wmp-track{ color:#a9d8ea; font-size:0.68rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .wmp-progress{ height:6px; border-radius:999px; background:#dbeeff; overflow:hidden; margin-bottom:8px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.15); }
+  .wmp-progress-fill{ height:100%; width:35%; background:linear-gradient(180deg, #d4ffb0, var(--lime-deep)); }
+  .wmp-bottom-row{ display:flex; align-items:center; gap:6px; }
+  .wmp-stations select{ flex:1; padding:5px 8px; border-radius:8px; border:1px solid #9cc9ec; background:#fff; font-weight:700; font-size:0.72rem; color:var(--ink); }
+  .wmp-vol{ width:16px; height:16px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff, #9cc9ec); border:none; cursor:pointer; flex-shrink:0; }
+  .wmp-volume-row{ display:flex; align-items:center; gap:6px; margin-top:6px; }
+  .wmp-volume-row input[type=range]{ flex:1; accent-color:#2E6BAE; }
   @media (max-width:860px){
-    .radio-player{ left:12px; right:12px; bottom:12px; width:auto; }
-    .radio-player.collapsed{ width:auto; }
+    .wmp-player{ left:12px; right:12px; width:auto; bottom:12px; }
+    .chat-panel{ right:12px; left:12px; width:auto; }
+    .chat-toggle{ right:16px; bottom:12px; }
   }
 
+  footer{ text-align:center; padding:30px 0 130px; color:var(--ink-soft); font-weight:700; font-size:0.85rem; }
+
   @media (max-width:860px){
-    .hero{ grid-template-columns:1fr; padding-top:30px; }
-    .hero h1{ font-size:2.1rem; }
-    .orb-stage{ height:220px; }
-    .orb{ width:150px; height:150px; }
-    .orb-ring{ width:190px; height:190px; }
-    .grid-3, .grid-2, .member-grid{ grid-template-columns:1fr; }
+    .hero{ grid-template-columns:1fr; padding-top:26px; }
+    .hero h1{ font-size:2rem; }
+    .orb-stage{ height:200px; }
+    .orb{ width:140px; height:140px; }
+    .orb-ring{ width:180px; height:180px; }
+    .grid-3, .grid-2, .member-grid, .badge-grid{ grid-template-columns:1fr 1fr; }
     .tabs{ margin-left:0; width:100%; justify-content:flex-start; }
   }
-  @media (prefers-reduced-motion: reduce){
-    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
-  }
+  @media (prefers-reduced-motion: reduce){ *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; } }
   :focus-visible{ outline:3px solid var(--aero-deep); outline-offset:3px; }
 </style>
 </head>
-<body>
-
-<div class="bubble-field" aria-hidden="true" id="bubbleField"></div>
-
-<div class="wrap">
-
-  <nav class="msn-bar">
-    <div class="brand"><span class="logo-mark"></span> Aldeia dos Crentes</div>
-    <div class="tabs" id="tabs">
-      <button class="tab-btn active" data-tab="inicio">🏠 Início</button>
-      <button class="tab-btn" data-tab="eventos">🎉 Eventos</button>
-      <button class="tab-btn" data-tab="redes">🎥 Redes</button>
-      <button class="tab-btn" data-tab="forum">📊 Fórum</button>
-      <button class="tab-btn" data-tab="comunidade">👥 Comunidade</button>
-    </div>
-  </nav>
-
-  <div id="view"></div>
-
-  <footer>Aldeia dos Crentes © 2026 — fé, anime e boas amizades ✞</footer>
+<body> <div class="bubble-field" aria-hidden="true" id="bubbleField"></div> <div class="wrap"> <nav class="msn-bar"> <div class="brand"><span class="logo-mark"></span> Aldeia dos Crentes</div> <div class="tabs" id="tabs"> <button class="tab-btn active" data-tab="inicio"> Início</button> <button class="tab-btn" data-tab="galeria"> Galeria</button> <button class="tab-btn" data-tab="redes"> Redes</button> <button class="tab-btn" data-tab="forum"> Fórum</button> <button class="tab-btn" data-tab="biblia"> Bíblia</button> <button class="tab-btn" data-tab="comunidade"> Home</button> </div> </nav> <div id="view"></div> <footer>Aldeia dos Crentes © 2026 — fé, anime e boas amizades </footer>
+</div> <!-- Player estilo Windows Media Player -->
+<div class="wmp-player" id="wmpPlayer"> <div class="wmp-titlebar" id="wmpTitlebar"> <span class="wmp-icon"></span> Windows Media Player — Rádio da Aldeia
+    <button class="wmp-min" id="wmpMin">–</button> </div> <div class="wmp-body"> <div class="wmp-wheel"> <button class="wmp-prev" id="wmpPrev">Anterior</button> <button class="wmp-play-btn" id="wmpPlay">Play</button> <button class="wmp-next" id="wmpNext">Próxima</button> </div> <div class="wmp-screen"> <div class="wmp-display"> <div class="wmp-status" id="wmpStatus">Play PARADO</div> <div class="wmp-clock" id="wmpClock">00:00:00</div> <div class="wmp-track" id="wmpTrack">Rádio da Aldeia — ao vivo</div> </div> <div class="wmp-progress"><div class="wmp-progress-fill" id="wmpProgressFill"></div></div> <div class="wmp-bottom-row"> <div class="wmp-stations"><select id="wmpStations"></select></div> <button class="wmp-vol" id="wmpMute" title="Mudo"></button> </div> <div class="wmp-volume-row"><span style="font-size:0.65rem;">Volume</span><input type="range" id="wmpVolume" min="0" max="100" value="70"></div> </div> </div>
 </div>
-
-<div class="radio-player" id="radioPlayer">
-  <div class="rp-titlebar" id="rpTitlebar">
-    <div class="rp-eq"><span></span><span></span><span></span><span></span></div>
-    <span>Rádio da Aldeia</span>
-    <button class="rp-min" id="rpMin" aria-label="Minimizar player">–</button>
-  </div>
-  <div class="rp-body">
-    <div class="rp-now">🎵 Rádio ao vivo</div>
-    <div class="rp-station-name" id="rpStationName">carregando estação...</div>
-    <div class="rp-controls">
-      <button class="rp-play" id="rpPlay" aria-label="Tocar ou pausar">▶</button>
-      <div class="rp-volume">
-        <span>🔊</span>
-        <input type="range" id="rpVolume" min="0" max="100" value="70">
-      </div>
-    </div>
-    <div class="rp-stations" id="rpStations"></div>
-    <div class="rp-status" id="rpStatus">clique em play pra começar</div>
-  </div>
-</div>
-<audio id="rpAudio" preload="none"></audio>
-
-<script>
+<audio id="wmpAudio" preload="none"></audio> <!-- Chat lateral -->
+<button class="chat-toggle" id="chatToggle"><span class="chat-badge" id="chatBadge" style="display:none;">novo</span></button>
+<div class="chat-panel" id="chatPanel"> <div class="chat-tabs"> <button class="active" data-ctab="amigos" id="ctabAmigos">Amigos</button> <button data-ctab="grupo" id="ctabGrupo">Grupo geral</button> </div> <div id="chatArea" style="flex:1; display:flex; flex-direction:column; min-height:0;"></div>
+</div> <script>
 /* ============ Bolhas de fundo ============ */
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 (function(){
   const field = document.getElementById('bubbleField');
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const bubbleCount = prefersReducedMotion ? 0 : 14;
   for(let i=0;i<bubbleCount;i++){
     const b = document.createElement('div');
@@ -491,64 +368,88 @@
   }
 })();
 
-/* ============ Dados fixos (conteúdo do site) ============ */
-const EVENTS = [
-  {emoji:'🙏', name:'Vigília Gospel & Games', date:'Mar/2026', desc:'Uma noite inteira de louvor, oração e sessões coletivas de jogo até o sol nascer.'},
-  {emoji:'🎌', name:'Maratona Anime Cristão', date:'Jan/2026', desc:'Assistimos e debatemos mensagens de fé escondidas em animes queridos da galera.'},
-  {emoji:'📖', name:'Devocional em Voz — Semana da Fé', date:'Dez/2025', desc:'Sete dias seguidos de devocional em call aberta, com reflexão e testemunhos.'},
-  {emoji:'🎤', name:'Live de Louvor Acústico', date:'Nov/2025', desc:'Membros da comunidade se revezaram no microfone tocando louvores autorais.'},
-  {emoji:'🖍️', name:'Concurso de Fanart Bíblico', date:'Out/2025', desc:'Desenhos inspirados em passagens bíblicas com estética de anime, votados pela galera.'},
-  {emoji:'🕹️', name:'Torneio Beneficente', date:'Set/2025', desc:'Campeonato de jogos com inscrição revertida para uma ação social local.'}
-];
-
-const VIDEOS = [
-  {emoji:'🎬', name:'Entrevista: fé e cultura otaku', desc:'Bate-papo no canal do YouTube sobre como conciliar anime e vida cristã.'},
-  {emoji:'📻', name:'Podcast Aldeia — Ep. 12', desc:'Discussão sobre comunidade, solidão geek e amizades verdadeiras.'},
-  {emoji:'✂️', name:'Bastidores do encontro presencial', desc:'Vlog mostrando como foi o primeiro meetup da galera fora do Discord.'},
-  {emoji:'📢', name:'Como começamos a Aldeia', desc:'A história por trás da criação do servidor, contada pelos fundadores.'}
-];
-
-const POLLS = {
-  biblia: {
-    title:'📖 Livro da Bíblia favorito',
-    options:[['salmos','Salmos'],['joao','João'],['genesis','Gênesis'],['provérbios','Provérbios'],['apocalipse','Apocalipse']]
-  },
-  louvor: {
-    title:'🎵 Estilo de louvor favorito',
-    options:[['worship','Worship contemplativo'],['gospel-pop','Gospel pop'],['hinos','Hinos tradicionais'],['rock-gospel','Rock gospel'],['lofi','Lofi de oração']]
-  },
-  anime: {
-    title:'🎌 Anime favorito da galera',
-    options:[['fma','Fullmetal Alchemist'],['aot','Attack on Titan'],['haikyuu','Haikyuu!!'],['clannad','Clannad'],['sk8','SK8 the Infinity']]
+/* Bolhas ao clicar em botões */
+document.addEventListener('click', (e)=>{
+  if(prefersReducedMotion) return;
+  const el = e.target.closest('button, a.btn-glossy');
+  if(!el) return;
+  const rect = el.getBoundingClientRect();
+  const n = 6;
+  for(let i=0;i<n;i++){
+    const b = document.createElement('div');
+    b.className = 'burst-bubble';
+    const size = 6 + Math.random()*14;
+    b.style.width = size+'px'; b.style.height = size+'px';
+    b.style.left = (rect.left + Math.random()*rect.width) + 'px';
+    b.style.top = (rect.top + rect.height/2) + 'px';
+    b.style.animationDuration = (0.8 + Math.random()*0.6)+'s';
+    document.body.appendChild(b);
+    setTimeout(()=>b.remove(), 1500);
   }
-};
+});
 
-const AVATARS = ['🙏','✝️','😇','🕊️','📖','🎮','🎌','⭐','🌸','🔥'];
+/* ============ Dados fixos ============ */
+const EVENTS = [
+  {emoji:'', name:'Vigília Gospel & Games', date:'Mar/2026', desc:'Uma noite inteira de louvor, oração e sessões coletivas de jogo até o sol nascer.'},
+  {emoji:'', name:'Maratona Anime Cristão', date:'Jan/2026', desc:'Assistimos e debatemos mensagens de fé escondidas em animes queridos da galera.'},
+  {emoji:'', name:'Devocional em Voz — Semana da Fé', date:'Dez/2025', desc:'Sete dias seguidos de devocional em call aberta, com reflexão e testemunhos.'},
+  {emoji:'', name:'Live de Louvor Acústico', date:'Nov/2025', desc:'Membros da comunidade se revezaram no microfone tocando louvores autorais.'},
+  {emoji:'', name:'Concurso de Fanart Bíblico', date:'Out/2025', desc:'Desenhos inspirados em passagens bíblicas com estética de anime, votados pela galera.'},
+  {emoji:'', name:'Torneio Beneficente', date:'Set/2025', desc:'Campeonato de jogos com inscrição revertida para uma ação social local.'}
+];
+
+const REDES = [
+  {emoji:'', name:'Canal no YouTube', desc:'Entrevistas, vlogs de bastidores e devocionais em vídeo.', link:'#'},
+  {emoji:'', name:'Instagram da Aldeia', desc:'Resenhas, bastidores dos eventos e avisos rápidos do dia a dia.', link:'#'},
+  {emoji:'', name:'Podcast Aldeia', desc:'Bate-papo sobre fé, cultura geek e vivência cristã jovem.', link:'#'},
+  {emoji:'', name:'Perfil no X/Twitter', desc:'Threads, memes e conversa rápida com a comunidade.', link:'#'}
+];
+
+const AVATARS = ['A','C','F','L','P','G','M','S','V','R'];
+const BADGES = [
+  ['gente-boa',' Gente boa'], ['engracado',' Engraçado(a)'], ['inteligente',' Inteligente'],
+  ['criativo',' Criativo(a)'], ['acolhedor',' Acolhedor(a)'], ['bom-papo',' Bom(boa) de conversa'],
+  ['inspirador',' Inspirador(a)'], ['confiavel',' Confiável']
+];
+
+// Versículos ilustrativos (texto de referência resumido — recomenda-se plugar uma API bíblica completa depois)
+const VERSES = [
+  {id:'jo3-16', ref:'João 3:16', text:'Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.', lang:'pt', version:'ARC'},
+  {id:'sl23-1', ref:'Salmos 23:1', text:'O Senhor é o meu pastor, nada me faltará.', lang:'pt', version:'ARC'},
+  {id:'fp4-13', ref:'Filipenses 4:13', text:'Posso todas as coisas naquele que me fortalece.', lang:'pt', version:'ARC'},
+  {id:'pv3-5', ref:'Provérbios 3:5', text:'Confia no Senhor de todo o teu coração e não te estribes no teu próprio entendimento.', lang:'pt', version:'ARC'},
+  {id:'js1-9', ref:'Josué 1:9', text:'Esforça-te e tem bom ânimo; não temas, nem te espantes, porque o Senhor teu Deus é contigo.', lang:'pt', version:'ARC'},
+  {id:'rm8-28', ref:'Romanos 8:28', text:'Todas as coisas contribuem juntamente para o bem daqueles que amam a Deus.', lang:'pt', version:'ARC'},
+  {id:'jer29-11', ref:'Jeremias 29:11', text:'Porque eu bem sei os pensamentos que tenho a vosso respeito, pensamentos de paz, e não de mal.', lang:'pt', version:'ARC'},
+  {id:'jo3-16-en', ref:'John 3:16', text:'For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.', lang:'en', version:'KJV'},
+  {id:'ps23-1-en', ref:'Psalm 23:1', text:'The LORD is my shepherd; I shall not want.', lang:'en', version:'KJV'},
+  {id:'sl46-1-es', ref:'Salmos 46:1', text:'Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.', lang:'es', version:'RVR1909'},
+  {id:'jn3-16-es', ref:'Juan 3:16', text:'Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree no se pierda, mas tenga vida eterna.', lang:'es', version:'RVR1909'}
+];
+const TRANSLATIONS = [
+  {id:'ARC', label:' Almeida Recebida (protestante)', lang:'pt'},
+  {id:'KJV', label:' King James Version', lang:'en'},
+  {id:'RVR1909', label:' Reina Valera 1909', lang:'es'},
+  {id:'JA', label:' Japonês (em breve)', lang:'ja'}
+];
 
 /* ============ Estado ============ */
 let currentTab = 'inicio';
-let currentUser = null; // string username
-let viewingProfile = null; // username sendo visualizado na comunidade
+let currentUser = null;
+let viewingProfile = null;
+let chatMode = 'amigos'; // amigos | grupo
+let chatActiveFriend = null;
+let chatPollTimer = null;
 
 const viewEl = document.getElementById('view');
 
 /* ============ Storage helpers ============ */
-async function getShared(key){
-  try{ const r = await window.storage.get(key, true); return r ? JSON.parse(r.value) : null; }
-  catch(e){ return null; }
-}
-async function setShared(key, value){
-  try{ await window.storage.set(key, JSON.stringify(value), true); return true; }
-  catch(e){ console.error('storage set failed', e); return false; }
-}
-async function getPersonal(key){
-  try{ const r = await window.storage.get(key, false); return r ? r.value : null; }
-  catch(e){ return null; }
-}
-async function setPersonal(key, value){
-  try{ await window.storage.set(key, value, false); return true; }
-  catch(e){ return false; }
-}
+async function getShared(key){ try{ const r = await window.storage.get(key, true); return r ? JSON.parse(r.value) : null; } catch(e){ return null; } }
+async function setShared(key, value){ try{ await window.storage.set(key, JSON.stringify(value), true); return true; } catch(e){ console.error('storage set failed', e); return false; } }
+async function getPersonal(key){ try{ const r = await window.storage.get(key, false); return r ? r.value : null; } catch(e){ return null; } }
+async function setPersonal(key, value){ try{ await window.storage.set(key, value, false); return true; } catch(e){ return false; } }
+async function getPersonalJSON(key, fallback){ const v = await getPersonal(key); return v ? JSON.parse(v) : fallback; }
+async function setPersonalJSON(key, obj){ return setPersonal(key, JSON.stringify(obj)); }
 
 /* ============ Navegação ============ */
 document.getElementById('tabs').addEventListener('click', (e)=>{
@@ -559,191 +460,239 @@ document.getElementById('tabs').addEventListener('click', (e)=>{
   render();
 });
 
-/* ============ Render principal ============ */
 async function render(){
   if(currentTab==='inicio') return renderInicio();
-  if(currentTab==='eventos') return renderEventos();
+  if(currentTab==='galeria') return renderGaleria();
   if(currentTab==='redes') return renderRedes();
   if(currentTab==='forum') return renderForum();
+  if(currentTab==='biblia') return renderBiblia();
   if(currentTab==='comunidade') return renderComunidade();
 }
 
-function renderInicio(){
-  viewEl.innerHTML = `
-    <section class="hero">
-      <div>
-        <span class="eyebrow">✞ comunidade cristã geek</span>
-        <h1>Bem-vindo à<br><span>Aldeia dos Crentes</span></h1>
-        <p>Um lugar pra jovens cristãos que também amam anime, manga e cultura japonesa se encontrarem, orarem juntos e fazerem amizades de verdade — mas todo mundo é bem-vindo aqui, geek ou não.</p>
-        <div class="hero-actions">
-          <a href="#" class="btn-glossy shine">💬 Entrar no Discord</a>
-          <span class="online-pill"><span class="status-dot"></span> comunidade ativa todo dia</span>
-        </div>
-      </div>
-      <div class="orb-stage">
-        <div class="orb-ring"></div>
-        <div class="orb"></div>
-      </div>
-    </section>
+/* ============ Posts (novidades + fórum compartilham a mesma base) ============ */
+async function getPosts(){
+  let posts = await getShared('posts');
+  if(!posts){
+    const now = Date.now();
+    posts = [
+      {id:'seed1', board:'novidades', type:'post', author:'equipe-aldeia', text:'Hoje removemos as transmissões antigas do Discord pra deixar o servidor mais organizado. Em breve tem novidade no lugar! ', likes:[], comments:[], ts: now-1000*60*60*24},
+      {id:'seed2', board:'novidades', type:'post', author:'equipe-aldeia', text:'Resenha nova no Instagram sobre o último evento — corre lá conferir as fotos! ', likes:[], comments:[], ts: now-1000*60*60*24*3},
+      {id:'seed3', board:'novidades', type:'post', author:'equipe-aldeia', text:'Vídeo novo no YouTube saiu essa semana, com bastidores do encontro presencial ', likes:[], comments:[], ts: now-1000*60*60*24*5},
+      {id:'seed4', board:'novidades', type:'post', author:'equipe-aldeia', text:' Mês que vem é aniversário da Aldeia dos Crentes! Bora planejar uma comemoração juntos.', likes:[], comments:[], ts: now-1000*60*60*24*7},
+      {id:'seed5', board:'novidades', type:'post', author:'equipe-aldeia', text:'Essa semana vai ter call de louvor quinta às 20h — se você não quer perder, apareça! ', likes:[], comments:[], ts: now-1000*60*60*24*2},
+      {id:'poll1', board:'forum', type:'enquete', author:'equipe-aldeia', text:' Qual o seu livro da Bíblia favorito?', pollOptions:[['salmos','Salmos'],['joao','João'],['genesis','Gênesis'],['proverbios','Provérbios'],['apocalipse','Apocalipse']], pollVotes:{}, likes:[], comments:[], ts: now-1000*60*60*24*10},
+      {id:'poll2', board:'forum', type:'enquete', author:'equipe-aldeia', text:' Qual estilo de louvor você mais curte?', pollOptions:[['worship','Worship contemplativo'],['gospel-pop','Gospel pop'],['hinos','Hinos tradicionais'],['rock-gospel','Rock gospel'],['lofi','Lofi de oração']], pollVotes:{}, likes:[], comments:[], ts: now-1000*60*60*24*11},
+      {id:'poll3', board:'forum', type:'enquete', author:'equipe-aldeia', text:' Anime favorito da galera?', pollOptions:[['fma','Fullmetal Alchemist'],['aot','Attack on Titan'],['haikyuu','Haikyuu!!'],['clannad','Clannad'],['sk8','SK8 the Infinity']], pollVotes:{}, likes:[], comments:[], ts: now-1000*60*60*24*12}
+    ];
+    await setShared('posts', posts);
+  }
+  return posts;
+}
+async function savePosts(posts){ await setShared('posts', posts); }
 
-    <div class="msn-window holo-border">
-      <div class="msn-titlebar">📌 Sobre a Aldeia <div class="titlebar-dots"><span></span><span></span><span></span></div></div>
-      <div class="msn-body grid-3">
-        <div class="glass-card shine">
-          <div class="event-thumb">🙏</div>
-          <h3>Foco no devocional</h3>
-          <p>Momentos fixos de reflexão bíblica e oração, sem pressão, no ritmo da comunidade.</p>
-        </div>
-        <div class="glass-card shine">
-          <div class="event-thumb">🎌</div>
-          <h3>Cultura geek com fé</h3>
-          <p>Anime, mangá e games sem culpa — discutimos tudo isso também sob a ótica da nossa fé.</p>
-        </div>
-        <div class="glass-card shine">
-          <div class="event-thumb">🤝</div>
-          <h3>Amizades de verdade</h3>
-          <p>Aqui ninguém fica de fora. O objetivo é sair da tela e formar amizades que duram.</p>
-        </div>
-      </div>
-    </div>
-  `;
+function timeAgo(ts){
+  const diff = Date.now()-ts;
+  const h = Math.floor(diff/(1000*60*60));
+  if(h<1) return 'agora há pouco';
+  if(h<24) return h+'h atrás';
+  const d = Math.floor(h/24);
+  return d+'d atrás';
 }
 
-function renderEventos(){
+function requireLogin(){
+  if(!currentUser){ alert('Entra na Comunidade primeiro pra criar seu nome de usuário :)'); return false; }
+  return true;
+}
+
+function renderPostHTML(p){
+  const tagClass = p.type==='desabafo' ? 'desabafo' : (p.type==='enquete' ? 'enquete' : '');
+  const tagLabel = p.type==='desabafo' ? 'desabafo' : (p.type==='enquete' ? 'enquete' : 'novidade');
+  const liked = currentUser && p.likes.includes(currentUser);
+  let pollHtml = '';
+  if(p.type==='enquete' && p.pollOptions){
+    const total = Object.values(p.pollVotes||{}).reduce((a,b)=>a+b,0);
+    const myChoice = currentUser ? null : null; // resolved async elsewhere via data attr
+    pollHtml = '<div class="poll-block" data-post="'+p.id+'">' + p.pollOptions.map(([k,label])=>{
+      const count = (p.pollVotes||{})[k]||0;
+      const pct = total>0 ? Math.round((count/total)*100) : 0;
+      return `<div class="poll-opt"><button data-post="${p.id}" data-opt="${k}" class="poll-vote-btn"><span class="bar" style="width:${pct}%"></span><span class="label">${label}</span><span class="count">${count} · ${pct}%</span></button></div>`;
+    }).join('') + '</div>';
+  }
+  return `
+    <div class="post" data-id="${p.id}"> <div class="post-head"> <span class="pauthor" data-user="${p.author}">${p.author}</span> <span class="ptag ${tagClass}">${tagLabel}</span> <span class="ptime">${timeAgo(p.ts)}</span> </div> <div class="post-text">${p.text}</div> ${pollHtml}
+      <div class="post-actions"> <button class="btn-ghost like-btn ${liked?'liked':''}" data-id="${p.id}"> ${p.likes.length}</button> <button class="btn-ghost comment-toggle" data-id="${p.id}"> ${p.comments.length} comentário${p.comments.length===1?'':'s'}</button> </div> <div class="post-comments" id="comments-${p.id}" style="display:none;"> ${p.comments.map(c=>`<div class="comment"><b>${c.author}:</b> ${c.text}</div>`).join('') || '<p class="small-note">Sem comentários ainda.</p>'}
+        <div class="comment-box"> <input type="text" placeholder="Escreva um comentário..." id="newcomment-${p.id}"> <button class="btn-glossy small" data-id="${p.id}" class="send-comment">Enviar</button> </div> </div> </div>`;
+}
+
+function attachPostHandlers(container){
+  container.querySelectorAll('.pauthor').forEach(el=>{
+    el.addEventListener('click', ()=>{ viewingProfile = el.dataset.user; currentTab='comunidade'; document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab==='comunidade')); render(); });
+  });
+  container.querySelectorAll('.like-btn').forEach(el=>{
+    el.addEventListener('click', async ()=>{
+      if(!requireLogin()) return;
+      const posts = await getPosts();
+      const p = posts.find(x=>x.id===el.dataset.id);
+      const idx = p.likes.indexOf(currentUser);
+      if(idx>=0) p.likes.splice(idx,1); else p.likes.push(currentUser);
+      await savePosts(posts);
+      render();
+    });
+  });
+  container.querySelectorAll('.comment-toggle').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const box = document.getElementById('comments-'+el.dataset.id);
+      box.style.display = box.style.display==='none' ? 'block' : 'none';
+    });
+  });
+  container.querySelectorAll('.post-comments button.btn-glossy').forEach(el=>{
+    el.addEventListener('click', async ()=>{
+      if(!requireLogin()) return;
+      const id = el.dataset.id;
+      const input = document.getElementById('newcomment-'+id);
+      const text = input.value.trim();
+      if(!text) return;
+      const posts = await getPosts();
+      const p = posts.find(x=>x.id===id);
+      p.comments.push({author:currentUser, text});
+      await savePosts(posts);
+      render();
+    });
+  });
+  container.querySelectorAll('.poll-vote-btn').forEach(el=>{
+    el.addEventListener('click', async ()=>{
+      if(!requireLogin()) return;
+      const id = el.dataset.post, opt = el.dataset.opt;
+      const myPollVotes = await getPersonalJSON('mypollvotes', {});
+      if(myPollVotes[id]){ alert('Você já votou nessa enquete!'); return; }
+      const posts = await getPosts();
+      const p = posts.find(x=>x.id===id);
+      p.pollVotes = p.pollVotes || {};
+      p.pollVotes[opt] = (p.pollVotes[opt]||0)+1;
+      await savePosts(posts);
+      myPollVotes[id] = opt;
+      await setPersonalJSON('mypollvotes', myPollVotes);
+      render();
+    });
+  });
+}
+
+async function renderInicio(){
   viewEl.innerHTML = `
-    <div class="msn-window holo-border">
-      <div class="msn-titlebar">🎉 Eventos que já rolaram <div class="titlebar-dots"><span></span><span></span><span></span></div></div>
-      <div class="msn-body">
-        <div class="section-head">
-          <h2>Já fizemos bastante coisa por aqui</h2>
-          <p>Um retrospecto do que a Aldeia já viveu junto.</p>
-        </div>
-        <div class="grid-3">
-          ${EVENTS.map(ev=>`
-            <div class="glass-card shine">
-              <div class="event-thumb">${ev.emoji}</div>
-              <div class="meta">${ev.date}</div>
-              <h3>${ev.name}</h3>
-              <p>${ev.desc}</p>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    </div>
-  `;
+    <section class="hero"> <div> <span class="eyebrow"> comunidade cristã geek</span> <h1>Bem-vindo à<br><span>Aldeia dos Crentes</span></h1> <p>Um lugar pra jovens cristãos que também amam anime, mangá e cultura japonesa se encontrarem, orarem juntos e fazerem amizades de verdade — mas todo mundo é bem-vindo aqui, geek ou não.</p> <div class="hero-actions"> <a href="#" class="btn-glossy shine"> Entrar no Discord</a> <span class="online-pill"><span class="status-dot"></span> comunidade ativa todo dia</span> </div> </div> <div class="orb-stage"><div class="orb-ring"></div><div class="orb"></div></div> </section> <div class="msn-window holo-border"> <div class="msn-titlebar"> Mural de novidades <div class="titlebar-dots"><span></span><span></span><span></span></div></div> <div class="msn-body"> <div class="section-head"><h2>Fica por dentro do que rola na Aldeia</h2><p>Novidades, bastidores e avisos da semana.</p></div> <div id="newsList">Carregando...</div> </div> </div> `;
+  const posts = (await getPosts()).filter(p=>p.board==='novidades').sort((a,b)=>b.ts-a.ts);
+  const listEl = document.getElementById('newsList');
+  listEl.innerHTML = posts.map(renderPostHTML).join('') || '<p class="small-note">Nenhuma novidade ainda.</p>';
+  attachPostHandlers(listEl);
+}
+
+function renderGaleria(){
+  viewEl.innerHTML = `
+    <div class="msn-window holo-border"> <div class="msn-titlebar"> Galeria <div class="titlebar-dots"><span></span><span></span><span></span></div></div> <div class="msn-body"> <div class="section-head"><h2>Confira o que já fizemos como Aldeia dos Crentes</h2><p>Um retrospecto do que a comunidade já viveu junto.</p></div> <div class="grid-3"> ${EVENTS.map(ev=>`<div class="glass-card shine"><div class="event-thumb">${ev.emoji}</div><div class="meta">${ev.date}</div><h3>${ev.name}</h3><p>${ev.desc}</p></div>`).join('')}
+        </div> </div> </div>`;
 }
 
 function renderRedes(){
   viewEl.innerHTML = `
-    <div class="msn-window holo-border">
-      <div class="msn-titlebar">🎥 Redes & Entrevistas <div class="titlebar-dots"><span></span><span></span><span></span></div></div>
-      <div class="msn-body">
-        <div class="section-head">
-          <h2>Nosso trabalho fora do Discord</h2>
-          <p>Também levamos a Aldeia pro YouTube e outras redes.</p>
-        </div>
-        <div class="grid-2">
-          ${VIDEOS.map(v=>`
-            <div class="video-card shine">
-              <div class="video-thumb">${v.emoji}</div>
-              <div>
-                <div class="name">${v.name}</div>
-                <div class="desc">${v.desc}</div>
-              </div>
-            </div>
-          `).join('')}
-        </div>
-        <p class="small-note" style="margin-top:16px;">Coloque aqui os links reais dos vídeos e do canal quando quiser publicar o site.</p>
-      </div>
-    </div>
-  `;
+    <div class="msn-window holo-border"> <div class="msn-titlebar"> Redes sociais <div class="titlebar-dots"><span></span><span></span><span></span></div></div> <div class="msn-body"> <div class="section-head"><h2>O projeto Aldeia fora do Discord</h2><p>Nos acompanhe também nessas páginas.</p></div> <div class="grid-2"> ${REDES.map(v=>`<div class="video-card shine"><div class="video-thumb">${v.emoji}</div><div><div class="name">${v.name}</div><div class="desc">${v.desc}</div><a class="link" href="${v.link}">acessar →</a></div></div>`).join('')}
+        </div> <p class="small-note" style="margin-top:14px;">Troque os links "#" pelos endereços reais das redes quando for publicar.</p> </div> </div>`;
 }
 
 async function renderForum(){
   viewEl.innerHTML = `
-    <div class="msn-window holo-border">
-      <div class="msn-titlebar">📊 Fórum & Enquetes <div class="titlebar-dots"><span></span><span></span><span></span></div></div>
-      <div class="msn-body">
-        <div class="section-head">
-          <h2>O que a galera prefere?</h2>
-          <p>Vote nas enquetes da comunidade — os resultados ficam salvos de verdade.</p>
-        </div>
-        <div id="pollsContainer">Carregando enquetes...</div>
-      </div>
-    </div>
-  `;
-  const container = document.getElementById('pollsContainer');
-  let html = '';
-  for(const key of Object.keys(POLLS)){
-    const poll = POLLS[key];
-    const votes = (await getShared('poll:'+key)) || {};
-    const total = Object.values(votes).reduce((a,b)=>a+b,0);
-    const myVotes = (await getPersonal('myvotes')) || '{}';
-    const myVotesObj = JSON.parse(myVotes);
-    const myChoice = myVotesObj[key];
-    html += `<div class="poll"><h4>${poll.title}</h4>`;
-    for(const [optKey, optLabel] of poll.options){
-      const count = votes[optKey] || 0;
-      const pct = total>0 ? Math.round((count/total)*100) : 0;
-      const voted = myChoice===optKey;
-      html += `
-        <div class="poll-opt">
-          <button data-poll="${key}" data-opt="${optKey}" class="${voted?'voted':''}">
-            <span class="bar" style="width:${pct}%"></span>
-            <span class="label">${voted?'✓ ':''}${optLabel}</span>
-            <span class="count">${count} voto${count===1?'':'s'} · ${pct}%</span>
-          </button>
-        </div>`;
-    }
-    html += `</div><div class="divider"></div>`;
-  }
-  container.innerHTML = html;
-  container.querySelectorAll('.poll-opt button').forEach(btn=>{
-    btn.addEventListener('click', onVote);
+    <div class="msn-window holo-border"> <div class="msn-titlebar"> Fórum da Aldeia <div class="titlebar-dots"><span></span><span></span><span></span></div></div> <div class="msn-body"> <div class="section-head"><h2>Timeline da comunidade</h2><p>Poste enquetes, desabafos ou qualquer coisa — e reaja aos posts da galera.</p></div> <div class="composer"> <div class="composer-row"> <select id="postType"><option value="post"> Post</option><option value="desabafo"> Desabafo</option><option value="enquete"> Enquete</option></select> </div> <textarea id="postText" placeholder="O que você quer compartilhar com a Aldeia?"></textarea> <div class="poll-builder" id="pollBuilder"> <input type="text" id="pollOpt1" placeholder="Opção 1"> <input type="text" id="pollOpt2" placeholder="Opção 2"> <input type="text" id="pollOpt3" placeholder="Opção 3 (opcional)"> <input type="text" id="pollOpt4" placeholder="Opção 4 (opcional)"> </div> <div><button class="btn-glossy small shine" id="btnPublish"> Publicar</button></div> </div> <div class="divider"></div> <div id="forumList">Carregando...</div> </div> </div>`;
+  document.getElementById('postType').addEventListener('change', (e)=>{
+    document.getElementById('pollBuilder').style.display = e.target.value==='enquete' ? 'flex' : 'none';
   });
+  document.getElementById('btnPublish').addEventListener('click', async ()=>{
+    if(!requireLogin()) return;
+    const type = document.getElementById('postType').value;
+    const text = document.getElementById('postText').value.trim();
+    if(!text) return;
+    const posts = await getPosts();
+    const newPost = {id:'p'+Date.now(), board:'forum', type, author:currentUser, text, likes:[], comments:[], ts:Date.now()};
+    if(type==='enquete'){
+      const opts = [document.getElementById('pollOpt1').value, document.getElementById('pollOpt2').value, document.getElementById('pollOpt3').value, document.getElementById('pollOpt4').value]
+        .filter(o=>o.trim()).map(o=>[o.trim().toLowerCase().replace(/\\s+/g,'-'), o.trim()]);
+      if(opts.length<2){ alert('Coloca pelo menos 2 opções pra enquete.'); return; }
+      newPost.pollOptions = opts; newPost.pollVotes = {};
+    }
+    posts.unshift(newPost);
+    await savePosts(posts);
+    renderForum();
+  });
+  const posts = (await getPosts()).filter(p=>p.board==='forum').sort((a,b)=>b.ts-a.ts);
+  const listEl = document.getElementById('forumList');
+  listEl.innerHTML = posts.map(renderPostHTML).join('') || '<p class="small-note">Nenhum post ainda — seja o primeiro!</p>';
+  attachPostHandlers(listEl);
 }
 
-async function onVote(e){
-  const btn = e.currentTarget;
-  const pollKey = btn.dataset.poll;
-  const optKey = btn.dataset.opt;
-  const myVotesRaw = (await getPersonal('myvotes')) || '{}';
-  const myVotesObj = JSON.parse(myVotesRaw);
-  if(myVotesObj[pollKey]){
-    alert('Você já votou nessa enquete! Seu voto continua contando.');
-    return;
+/* ============ Bíblia ============ */
+async function renderBiblia(){
+  const todayIndex = Math.floor(Date.now()/(1000*60*60*24)) % VERSES.length;
+  const votd = VERSES[todayIndex];
+  viewEl.innerHTML = `
+    <div class="msn-window holo-border"> <div class="msn-titlebar"> Bíblia <div class="titlebar-dots"><span></span><span></span><span></span></div></div> <div class="msn-body"> <div class="votd"> <div class="verse-ref"> Versículo do dia — ${votd.ref} (${votd.version})</div> <div class="verse-text">${votd.text}</div> </div> <div class="bible-toolbar"> <select id="bibleLang"> ${TRANSLATIONS.map(t=>`<option value="${t.lang}">${t.label}</option>`).join('')}
+          </select> </div> <div id="verseList"></div> <p class="small-note">Apenas versões protestantes. Esse é um conjunto inicial de versículos ilustrativos — dá pra conectar uma API bíblica completa depois pra ter o texto integral e mais versões.</p> ${currentUser ? `<div class="divider"></div><h4 style="color:var(--aero-deep); margin-bottom:10px;"> Meu bloco de notas</h4><textarea class="verse-note-textarea" id="myNotebook" placeholder="Suas anotações pessoais sobre a Palavra..." style="width:100%; min-height:100px; padding:10px 14px; border-radius:12px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.6); font-weight:600;"></textarea><div style="margin-top:8px;"><button class="btn-glossy small shine" id="btnSaveNotebook"> Salvar anotações</button></div>` : `<p class="small-note">Entre na Comunidade pra salvar versículos, grifar e escrever no seu bloco de notas.</p>`}
+      </div> </div>`;
+
+  async function drawVerses(){
+    const lang = document.getElementById('bibleLang').value;
+    const marks = currentUser ? (await getShared('bible-marks:'+currentUser)) || {} : {};
+    const list = VERSES.filter(v=>v.lang===lang);
+    document.getElementById('verseList').innerHTML = list.map(v=>{
+      const m = marks[v.id] || {};
+      const markClass = m.color ? 'mark-'+m.color : '';
+      return `
+      <div class="verse-card"> <div class="verse-ref">${v.ref} (${v.version})</div> <div class="verse-text ${markClass}">${v.text}</div> <div class="verse-actions"> <span class="mark-dot yellow" data-verse="${v.id}" data-color="yellow" title="grifar amarelo"></span> <span class="mark-dot green" data-verse="${v.id}" data-color="green" title="grifar verde"></span> <span class="mark-dot pink" data-verse="${v.id}" data-color="pink" title="grifar rosa"></span> <span class="mark-dot blue" data-verse="${v.id}" data-color="blue" title="grifar azul"></span> <button class="btn-ghost ${m.saved?'liked':''}" data-verse="${v.id}" id="save-${v.id}">${m.saved?' salvo':' salvar'}</button> </div> </div>`;
+    }).join('') || '<p class="small-note">Ainda sem versículos nesse idioma — em breve!</p>';
+
+    document.querySelectorAll('.mark-dot').forEach(dot=>{
+      dot.addEventListener('click', async ()=>{
+        if(!requireLogin()) return;
+        const marks = (await getShared('bible-marks:'+currentUser)) || {};
+        const vid = dot.dataset.verse;
+        marks[vid] = marks[vid] || {};
+        marks[vid].color = marks[vid].color===dot.dataset.color ? null : dot.dataset.color;
+        await setShared('bible-marks:'+currentUser, marks);
+        drawVerses();
+      });
+    });
+    document.querySelectorAll('[id^="save-"]').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        if(!requireLogin()) return;
+        const marks = (await getShared('bible-marks:'+currentUser)) || {};
+        const vid = btn.dataset.verse;
+        marks[vid] = marks[vid] || {};
+        marks[vid].saved = !marks[vid].saved;
+        await setShared('bible-marks:'+currentUser, marks);
+        drawVerses();
+      });
+    });
   }
-  const votes = (await getShared('poll:'+pollKey)) || {};
-  votes[optKey] = (votes[optKey]||0) + 1;
-  await setShared('poll:'+pollKey, votes);
-  myVotesObj[pollKey] = optKey;
-  await setPersonal('myvotes', JSON.stringify(myVotesObj));
-  renderForum();
+  document.getElementById('bibleLang').addEventListener('change', drawVerses);
+  drawVerses();
+
+  if(currentUser){
+    const marks = (await getShared('bible-marks:'+currentUser)) || {};
+    document.getElementById('myNotebook').value = marks.__notebook || '';
+    document.getElementById('btnSaveNotebook').addEventListener('click', async ()=>{
+      const marks = (await getShared('bible-marks:'+currentUser)) || {};
+      marks.__notebook = document.getElementById('myNotebook').value;
+      await setShared('bible-marks:'+currentUser, marks);
+      alert('Anotações salvas!');
+    });
+  }
 }
 
 /* ============ Comunidade (perfis estilo Orkut) ============ */
 async function renderComunidade(){
   currentUser = await getPersonal('currentUser');
+  if(currentUser===''){ currentUser = null; }
 
   if(!currentUser){
     viewEl.innerHTML = `
-      <div class="msn-window holo-border">
-        <div class="msn-titlebar">👥 Comunidade <div class="titlebar-dots"><span></span><span></span><span></span></div></div>
-        <div class="msn-body">
-          <div class="section-head">
-            <h2>Crie sua homepage na Aldeia</h2>
-            <p>Escolha um nome, conte um pouco sobre você e apareça pros outros membros. Tudo o que você preencher fica visível pra qualquer pessoa que visitar o site — nada aqui é privado.</p>
-          </div>
-          <div class="login-box">
-            <div class="field">
-              <label>Como você quer ser chamado?</label>
-              <input type="text" id="loginName" placeholder="ex: joana_luz">
-            </div>
-            <button class="btn-glossy blue shine" id="btnEntrar">✦ Entrar / criar minha homepage</button>
-          </div>
-        </div>
-      </div>
-    `;
+      <div class="msn-window holo-border"> <div class="msn-titlebar"> Comunidade <div class="titlebar-dots"><span></span><span></span><span></span></div></div> <div class="msn-body"> <div class="section-head"><h2>Crie sua homepage na Aldeia</h2><p>Escolha um nome, conte um pouco sobre você e apareça pros outros membros. Tudo o que você preencher fica visível pra qualquer pessoa que visitar o site — nada aqui é privado.</p></div> <div class="login-box"> <div class="field"><label>Como você quer ser chamado?</label><input type="text" id="loginName" placeholder="ex: joana_luz"></div> <button class="btn-glossy blue shine" id="btnEntrar"> Entrar / criar minha homepage</button> </div> </div> </div>`;
     document.getElementById('btnEntrar').addEventListener('click', async ()=>{
       const name = document.getElementById('loginName').value.trim();
       if(!name){ alert('Digita um nome primeiro :)'); return; }
@@ -752,119 +701,98 @@ async function renderComunidade(){
       await setPersonal('currentUser', safeName);
       const existing = await getShared('member:'+safeName);
       if(!existing){
-        await setShared('member:'+safeName, {
-          username:safeName, avatar:AVATARS[Math.floor(Math.random()*AVATARS.length)],
-          bio:'Ainda não escreveu nada sobre si.', verse:'', anime:'', friends:[]
-        });
+        await setShared('member:'+safeName, { username:safeName, avatar:AVATARS[Math.floor(Math.random()*AVATARS.length)], avatarUrl:'', bio:'Ainda não escreveu nada sobre si.', verse:'', anime:'', friends:[] });
         const idx = (await getShared('member-index')) || [];
         if(!idx.includes(safeName)){ idx.push(safeName); await setShared('member-index', idx); }
       }
-      currentUser = safeName;
-      viewingProfile = safeName;
+      currentUser = safeName; viewingProfile = safeName;
       renderComunidade();
     });
     return;
   }
 
   if(!viewingProfile) viewingProfile = currentUser;
-
   const profile = await getShared('member:'+viewingProfile);
   const memberIndex = (await getShared('member-index')) || [];
   const guestbook = (await getShared('guestbook:'+viewingProfile)) || [];
+  const badgeVotes = (await getShared('badges:'+viewingProfile)) || {};
   const isOwn = viewingProfile===currentUser;
   const myProfile = isOwn ? profile : await getShared('member:'+currentUser);
   const isFriend = myProfile && myProfile.friends && myProfile.friends.includes(viewingProfile);
+  const myBadgeVotes = await getPersonalJSON('mybadgevotes', {});
+  const myVoteOnThisProfile = myBadgeVotes[viewingProfile];
+
+  const topBadges = Object.entries(badgeVotes).sort((a,b)=>b[1]-a[1]).slice(0,4);
+
+  const avatarHtml = profile.avatarUrl ? `<img src="${profile.avatarUrl}" alt="">` : profile.avatar;
 
   let membersHtml = '';
   for(const uname of memberIndex){
     if(uname===viewingProfile) continue;
     const m = await getShared('member:'+uname);
     if(!m) continue;
-    membersHtml += `
-      <div class="member-chip" data-user="${uname}">
-        <div class="avatar-sm">${m.avatar}</div>
-        <div>
-          <div class="mname">${uname}</div>
-          <div class="mstatus">${m.anime? '🎌 '+m.anime : 'membro da Aldeia'}</div>
-        </div>
-      </div>`;
+    const mAvatar = m.avatarUrl ? `<img src="${m.avatarUrl}" alt="">` : m.avatar;
+    membersHtml += `<div class="member-chip" data-user="${uname}"><div class="avatar-sm">${mAvatar}</div><div><div class="mname">${uname}</div><div class="mstatus">${m.anime? ' '+m.anime : 'membro da Aldeia'}</div></div></div>`;
   }
 
+  const allPosts = await getPosts();
+  const historyItems = allPosts.filter(p=>p.author===viewingProfile || p.likes.includes(viewingProfile) || p.comments.some(c=>c.author===viewingProfile));
+  let historyHtml = '';
+  historyItems.slice(0,12).forEach(p=>{
+    if(p.author===viewingProfile) historyHtml += `<div class="history-item">Publicou: <b>"${p.text.slice(0,60)}${p.text.length>60?'...':''}"</b></div>`;
+    else if(p.likes.includes(viewingProfile)) historyHtml += `<div class="history-item">Curtiu o post de <b>${p.author}</b>: "${p.text.slice(0,50)}${p.text.length>50?'...':''}"</div>`;
+    const myComments = p.comments.filter(c=>c.author===viewingProfile);
+    myComments.forEach(c=>{ historyHtml += `<div class="history-item">Comentou em post de <b>${p.author}</b>: "${c.text.slice(0,50)}"</div>`; });
+  });
+
   viewEl.innerHTML = `
-    <div class="msn-window holo-border">
-      <div class="msn-titlebar">👤 Homepage de ${viewingProfile} <div class="titlebar-dots"><span></span><span></span><span></span></div></div>
-      <div class="msn-body">
-        <div class="profile-header">
-          <div class="avatar-big">${profile.avatar}</div>
-          <div>
-            <div class="profile-name">${viewingProfile} ${isOwn?'(você)':''}</div>
-            <div class="profile-tag"><span class="status-dot"></span> online na Aldeia</div>
-            <div class="profile-facts">
-              ${profile.verse?`<span class="fact-pill">📖 ${profile.verse}</span>`:''}
-              ${profile.anime?`<span class="fact-pill">🎌 ${profile.anime}</span>`:''}
-              <span class="fact-pill">🤝 ${(profile.friends||[]).length} amigos</span>
-            </div>
-          </div>
-          ${!isOwn ? `<button class="btn-glossy small ${isFriend?'':'blue'} shine" id="btnAddFriend" ${isFriend?'disabled':''}>${isFriend?'✓ já são amigos':'+ adicionar amigo'}</button>` : ''}
-        </div>
-        <p style="font-weight:600; color:var(--ink-soft);">${profile.bio}</p>
+    <div class="msn-window holo-border"> <div class="msn-titlebar"> Homepage de ${viewingProfile} <div class="titlebar-dots"><span></span><span></span><span></span></div></div> <div class="msn-body"> <div class="profile-header"> <div class="avatar-big">${avatarHtml}</div> <div> <div class="profile-name">${viewingProfile} ${isOwn?'(você)':''}</div> <div class="profile-tag"><span class="status-dot"></span> online na Aldeia</div> <div class="profile-facts"> ${profile.verse?`<span class="fact-pill"> ${profile.verse}</span>`:''}
+              ${profile.anime?`<span class="fact-pill"> ${profile.anime}</span>`:''}
+              <span class="fact-pill"> ${(profile.friends||[]).length} amigos</span> ${topBadges.map(([k,v])=>{ const b=BADGES.find(x=>x[0]===k); return b?`<span class="badge-pill">${b[1]} (${v})</span>`:''; }).join('')}
+            </div> </div> ${!isOwn ? `<button class="btn-glossy small ${isFriend?'':'blue'} shine" id="btnAddFriend" ${isFriend?'disabled':''}>${isFriend?' já são amigos':'+ adicionar amigo'}</button>` : ''}
+        </div> <p style="font-weight:600; color:var(--ink-soft);">${profile.bio}</p> ${!isOwn ? `
+          <div class="divider"></div> <h4 style="color:var(--aero-deep); margin-bottom:10px;"> Vote em ${viewingProfile}</h4> <div class="badge-grid"> ${BADGES.map(([k,label])=>`<button class="badge-btn ${myVoteOnThisProfile===k?'voted':''}" data-badge="${k}">${label}<small>${badgeVotes[k]||0} voto${(badgeVotes[k]||0)===1?'':'s'}</small></button>`).join('')}
+          </div> ` : ''}
 
         ${isOwn ? `
-          <div class="divider"></div>
-          <h4 style="color:var(--aero-deep); margin-bottom:12px;">✏️ Editar minha homepage</h4>
-          <div class="grid-2">
-            <div class="field"><label>Bio</label><textarea id="editBio">${profile.bio==='Ainda não escreveu nada sobre si.'?'':profile.bio}</textarea></div>
-            <div>
-              <div class="field"><label>Versículo favorito</label><input id="editVerse" value="${profile.verse||''}" placeholder="ex: Filipenses 4:13"></div>
-              <div class="field"><label>Anime favorito</label><input id="editAnime" value="${profile.anime||''}" placeholder="ex: Fullmetal Alchemist"></div>
-            </div>
-          </div>
-          <div class="field"><label>Avatar</label>
-            <select id="editAvatar">${AVATARS.map(a=>`<option ${a===profile.avatar?'selected':''}>${a}</option>`).join('')}</select>
-          </div>
-          <button class="btn-glossy shine" id="btnSaveProfile">💾 Salvar homepage</button>
-        ` : ''}
+          <div class="divider"></div> <h4 style="color:var(--aero-deep); margin-bottom:12px;">Editar Editar minha homepage</h4> <div class="grid-2"> <div class="field"><label>Bio</label><textarea id="editBio">${profile.bio==='Ainda não escreveu nada sobre si.'?'':profile.bio}</textarea></div> <div> <div class="field"><label>Versículo favorito</label><input id="editVerse" value="${profile.verse||''}" placeholder="ex: Filipenses 4:13"></div> <div class="field"><label>Anime favorito</label><input id="editAnime" value="${profile.anime||''}" placeholder="ex: Fullmetal Alchemist"></div> </div> </div> <div class="field"><label>Avatar (emoji)</label><select id="editAvatar">${AVATARS.map(a=>`<option ${a===profile.avatar?'selected':''}>${a}</option>`).join('')}</select></div> <div class="field"><label>Ou link de uma foto sua</label><input id="editAvatarUrl" value="${profile.avatarUrl||''}" placeholder="https://... (opcional, substitui o emoji)"><small>Cole o link de uma imagem já hospedada (ex: no Imgur). Sem upload de arquivo direto por aqui.</small></div> <button class="btn-glossy shine" id="btnSaveProfile"> Salvar homepage</button> ` : ''}
 
-        <div class="divider"></div>
-        <h4 style="color:var(--aero-deep); margin-bottom:12px;">💌 Mural de recados</h4>
-        <div id="guestbookList">
-          ${guestbook.length? guestbook.map(g=>`<div class="recado"><div class="from">${g.from}</div><div class="text">${g.text}</div></div>`).join('') : '<p class="small-note">Ainda sem recados. Seja o primeiro a deixar um!</p>'}
-        </div>
-        ${!isOwn || true ? `
-          <div class="field" style="margin-top:14px;">
-            <textarea id="newRecado" placeholder="Deixe um recado pra ${viewingProfile}..."></textarea>
-          </div>
-          <button class="btn-glossy purple small shine" id="btnRecado">💌 Enviar recado</button>
-        ` : ''}
+        <div class="divider"></div> <h4 style="color:var(--aero-deep); margin-bottom:12px;"> Depoimentos</h4> <div id="guestbookList">${guestbook.length? guestbook.map(g=>`<div class="recado"><div class="from">${g.from}</div><div class="text">${g.text}</div></div>`).join('') : '<p class="small-note">Ainda sem depoimentos. Seja o primeiro a deixar um!</p>'}</div> <div class="field" style="margin-top:14px;"><textarea id="newRecado" placeholder="Deixe um depoimento pra ${viewingProfile}..."></textarea></div> <button class="btn-glossy purple small shine" id="btnRecado"> Enviar depoimento</button> <div class="divider"></div> <h4 style="color:var(--aero-deep); margin-bottom:12px;"> Histórico de interações no fórum</h4> ${historyHtml || '<p class="small-note">Ainda sem atividade no fórum.</p>'}
 
-        <div class="divider"></div>
-        <h4 style="color:var(--aero-deep); margin-bottom:12px;">👥 Membros da Aldeia</h4>
-        <div class="member-grid">
-          ${membersHtml || '<p class="small-note">Você é o primeiro membro por aqui!</p>'}
-        </div>
+        <div class="divider"></div> <h4 style="color:var(--aero-deep); margin-bottom:12px;"> Membros da Aldeia</h4> <div class="member-grid">${membersHtml || '<p class="small-note">Você é o primeiro membro por aqui!</p>'}</div> <div class="divider"></div> <button class="btn-glossy blue small" id="btnLogout">Voltar Sair (trocar de usuário)</button> </div> </div>`;
 
-        <div class="divider"></div>
-        <button class="btn-glossy blue small" id="btnLogout">↩ Sair (trocar de usuário)</button>
-      </div>
-    </div>
-  `;
-
-  document.querySelectorAll('.member-chip').forEach(chip=>{
-    chip.addEventListener('click', ()=>{ viewingProfile = chip.dataset.user; renderComunidade(); });
-  });
+  document.querySelectorAll('.member-chip').forEach(chip=>{ chip.addEventListener('click', ()=>{ viewingProfile = chip.dataset.user; renderComunidade(); }); });
 
   const btnAdd = document.getElementById('btnAddFriend');
   if(btnAdd){
     btnAdd.addEventListener('click', async ()=>{
       const mp = await getShared('member:'+currentUser);
       mp.friends = mp.friends || [];
-      if(!mp.friends.includes(viewingProfile)){
-        mp.friends.push(viewingProfile);
-        await setShared('member:'+currentUser, mp);
-      }
+      if(!mp.friends.includes(viewingProfile)){ mp.friends.push(viewingProfile); await setShared('member:'+currentUser, mp); }
       renderComunidade();
     });
   }
+
+  document.querySelectorAll('.badge-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      if(!requireLogin()) return;
+      const votes = await getPersonalJSON('mybadgevotes', {});
+      const badges = (await getShared('badges:'+viewingProfile)) || {};
+      const chosen = btn.dataset.badge;
+      const prev = votes[viewingProfile];
+      if(prev===chosen){
+        badges[chosen] = Math.max(0,(badges[chosen]||0)-1);
+        delete votes[viewingProfile];
+      } else {
+        if(prev) badges[prev] = Math.max(0,(badges[prev]||0)-1);
+        badges[chosen] = (badges[chosen]||0)+1;
+        votes[viewingProfile] = chosen;
+      }
+      await setShared('badges:'+viewingProfile, badges);
+      await setPersonalJSON('mybadgevotes', votes);
+      renderComunidade();
+    });
+  });
 
   const btnSave = document.getElementById('btnSaveProfile');
   if(btnSave){
@@ -874,149 +802,196 @@ async function renderComunidade(){
       p.verse = document.getElementById('editVerse').value.trim();
       p.anime = document.getElementById('editAnime').value.trim();
       p.avatar = document.getElementById('editAvatar').value;
+      p.avatarUrl = document.getElementById('editAvatarUrl').value.trim();
       await setShared('member:'+currentUser, p);
       renderComunidade();
     });
   }
 
-  const btnRecado = document.getElementById('btnRecado');
-  if(btnRecado){
-    btnRecado.addEventListener('click', async ()=>{
-      const text = document.getElementById('newRecado').value.trim();
-      if(!text) return;
-      const gb = (await getShared('guestbook:'+viewingProfile)) || [];
-      gb.unshift({from:currentUser, text});
-      await setShared('guestbook:'+viewingProfile, gb);
-      renderComunidade();
-    });
-  }
+  document.getElementById('btnRecado').addEventListener('click', async ()=>{
+    const text = document.getElementById('newRecado').value.trim();
+    if(!text) return;
+    if(!requireLogin()) return;
+    const gb = (await getShared('guestbook:'+viewingProfile)) || [];
+    gb.unshift({from:currentUser, text});
+    await setShared('guestbook:'+viewingProfile, gb);
+    renderComunidade();
+  });
 
   document.getElementById('btnLogout').addEventListener('click', async ()=>{
     await setPersonal('currentUser', '');
-    currentUser = null;
-    viewingProfile = null;
+    currentUser = null; viewingProfile = null;
     renderComunidade();
   });
 }
 
 render();
 
-/* ============ Rádio persistente (estilo Windows Media Player) ============ */
+/* ============ Chat lateral (amigos + grupo) ============ */
 (function(){
-const STATIONS = [
- 
-  {name:'Kiss FM 92.5', url:'https://27433.live.streamtheworld.com/RADIO_KISSFM_ADP/HLS/e705c741-a901-4241-aa09-16d6fbb16c24/0/playlist.m3u8'},
-  {name:'Rádio Ding — Gospel', url:'https://ec1.everestcast.host:1750/;'},
-  {name:'GL365 — Gospel/Louvor', url:'https://ec1.everestcast.host:2650/;'},
-  {name:'Faithful Gospel Radio', url:'http://ams-pioneer02.dedicateware.com:1430/stream'}
-];
+  const toggle = document.getElementById('chatToggle');
+  const panel = document.getElementById('chatPanel');
+  const area = document.getElementById('chatArea');
+  const ctabAmigos = document.getElementById('ctabAmigos');
+  const ctabGrupo = document.getElementById('ctabGrupo');
 
-  const audio = document.getElementById('rpAudio');
-  const playerEl = document.getElementById('radioPlayer');
-  const btnPlay = document.getElementById('rpPlay');
-  const btnMin = document.getElementById('rpMin');
-  const titlebar = document.getElementById('rpTitlebar');
-  const volumeSlider = document.getElementById('rpVolume');
-  const stationNameEl = document.getElementById('rpStationName');
-  const statusEl = document.getElementById('rpStatus');
-  const stationsEl = document.getElementById('rpStations');
+  toggle.addEventListener('click', ()=>{
+    panel.classList.toggle('open');
+    if(panel.classList.contains('open')) drawChat();
+    else if(chatPollTimer){ clearInterval(chatPollTimer); chatPollTimer=null; }
+  });
+  ctabAmigos.addEventListener('click', ()=>{ chatMode='amigos'; chatActiveFriend=null; ctabAmigos.classList.add('active'); ctabGrupo.classList.remove('active'); drawChat(); });
+  ctabGrupo.addEventListener('click', ()=>{ chatMode='grupo'; ctabGrupo.classList.add('active'); ctabAmigos.classList.remove('active'); drawChat(); });
+
+  function pairKey(a,b){ return [a,b].sort().join('__'); }
+
+  async function drawChat(){
+    if(!currentUser){
+      area.innerHTML = '<div style="padding:16px;"><p class="small-note">Entre na Comunidade pra poder conversar com a galera.</p></div>';
+      return;
+    }
+    if(chatMode==='amigos' && !chatActiveFriend){
+      const myProfile = await getShared('member:'+currentUser);
+      const friends = (myProfile && myProfile.friends) || [];
+      area.innerHTML = `<div class="chat-list" id="friendList">${friends.length? friends.map(f=>`<div class="chat-friend" data-f="${f}"><div class="avatar-sm"></div><div class="mname">${f}</div></div>`).join('') : '<p class="small-note" style="padding:10px;">Você ainda não adicionou amigos. Visite perfis na Comunidade!</p>'}</div>`;
+      area.querySelectorAll('.chat-friend').forEach(el=>{ el.addEventListener('click', ()=>{ chatActiveFriend = el.dataset.f; drawChat(); }); });
+      return;
+    }
+    let key, title;
+    if(chatMode==='grupo'){ key = 'chat-group'; title='Grupo geral'; }
+    else { key = 'dm:'+pairKey(currentUser, chatActiveFriend); title = chatActiveFriend; }
+
+    const msgs = (await getShared(key)) || [];
+    area.innerHTML = `
+      ${chatMode==='amigos' ? `<button class="chat-back" id="chatBack">← ${title}</button>` : ''}
+      <div class="chat-thread" id="chatThread">${msgs.map(m=>`<div class="chat-msg ${m.author===currentUser?'mine':''}"><span class="who">${m.author}</span>${m.text}</div>`).join('') || '<p class="small-note" style="padding:10px;">Nenhuma mensagem ainda — diga oi!</p>'}</div> <div class="chat-input-row"><input type="text" id="chatInput" placeholder="Escreva uma mensagem..."><button id="chatSend"></button></div> `;
+    const thread = document.getElementById('chatThread');
+    thread.scrollTop = thread.scrollHeight;
+    const back = document.getElementById('chatBack');
+    if(back) back.addEventListener('click', ()=>{ chatActiveFriend=null; drawChat(); });
+    document.getElementById('chatSend').addEventListener('click', ()=>sendMsg(key));
+    document.getElementById('chatInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') sendMsg(key); });
+
+    if(chatPollTimer) clearInterval(chatPollTimer);
+    chatPollTimer = setInterval(async ()=>{
+      const fresh = (await getShared(key)) || [];
+      const t = document.getElementById('chatThread');
+      if(!t) return;
+      t.innerHTML = fresh.map(m=>`<div class="chat-msg ${m.author===currentUser?'mine':''}"><span class="who">${m.author}</span>${m.text}</div>`).join('') || '<p class="small-note" style="padding:10px;">Nenhuma mensagem ainda — diga oi!</p>';
+    }, 6000);
+  }
+
+  async function sendMsg(key){
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if(!text) return;
+    const msgs = (await getShared(key)) || [];
+    msgs.push({author:currentUser, text, ts:Date.now()});
+    await setShared(key, msgs);
+    input.value='';
+    drawChat();
+  }
+
+  window.__redrawChat = drawChat;
+})();
+
+/* ============ Rádio (skin Windows Media Player) ============ */
+(function(){
+  const STATIONS = [
+    {name:'Rádio Aldeia', url:'https://stream.zeno.fm/jpqkapo4xffvv'}
+  ];
+  const audio = document.getElementById('wmpAudio');
+  const playerEl = document.getElementById('wmpPlayer');
+  const btnPlay = document.getElementById('wmpPlay');
+  const btnPrev = document.getElementById('wmpPrev');
+  const btnNext = document.getElementById('wmpNext');
+  const btnMin = document.getElementById('wmpMin');
+  const titlebar = document.getElementById('wmpTitlebar');
+  const volumeSlider = document.getElementById('wmpVolume');
+  const btnMute = document.getElementById('wmpMute');
+  const statusEl = document.getElementById('wmpStatus');
+  const clockEl = document.getElementById('wmpClock');
+  const trackEl = document.getElementById('wmpTrack');
+  const progressFill = document.getElementById('wmpProgressFill');
+  const stationSelect = document.getElementById('wmpStations');
 
   let stationIndex = 0;
+  let seconds = 0;
+  let clockTimer = null;
+  let muted = false;
 
-  stationsEl.innerHTML = STATIONS.map((s,i)=>`<button class="rp-station-btn ${i===0?'active':''}" data-i="${i}">📻 ${s.name}</button>`).join('');
+  stationSelect.innerHTML = STATIONS.map((s,i)=>`<option value="${i}">${s.name}</option>`).join('');
 
-  let hls = null;
-
-function setStation(i, autoplay){
-  stationIndex = i;
-  const s = STATIONS[i];
-
-  if(hls){
-    hls.destroy();
-    hls = null;
+  function fmt(n){ return String(n).padStart(2,'0'); }
+  function tickClock(){
+    seconds++;
+    const h = Math.floor(seconds/3600), m = Math.floor((seconds%3600)/60), s = seconds%60;
+    clockEl.textContent = fmt(h)+':'+fmt(m)+':'+fmt(s);
+    progressFill.style.width = (10 + (seconds%50)) + '%';
   }
 
-  stationNameEl.textContent = s.name;
-
-  document.querySelectorAll('.rp-station-btn').forEach((b,idx)=>
-    b.classList.toggle('active', idx===i)
-  );
-
-  if(s.url.includes('.m3u8') && window.Hls && Hls.isSupported()){
-    hls = new Hls();
-    hls.loadSource(s.url);
-    hls.attachMedia(audio);
-
-    hls.on(Hls.Events.MANIFEST_PARSED, ()=>{
-      if(autoplay) tryPlay();
-    });
-  } else {
-    audio.src = s.url;
+  function setStation(i, autoplay){
+    stationIndex = i;
+    stationSelect.value = i;
+    const s = STATIONS[i];
+    trackEl.textContent = 'Aldeia dos Crentes — ' + s.name;
     if(autoplay) tryPlay();
   }
-}
-  function tryPlay(){
-    statusEl.textContent = 'conectando...';
-    audio.play().then(()=>{
-      playerEl.classList.add('playing');
-      btnPlay.textContent = '⏸';
-      statusEl.textContent = 'tocando agora';
-    }).catch(()=>{
-      statusEl.textContent = 'não rolou tocar — tenta de novo ou troca de estação';
-      playerEl.classList.remove('playing');
-      btnPlay.textContent = '▶';
-    });
+
+  async function tryPlay(){
+    statusEl.textContent = 'Play CONECTANDO...';
+
+    // Streams ao vivo (como Zeno FM) podem perder a conexão depois de pausar.
+    // Ao apertar Play, reconectamos ao endereço atual da rádio.
+    const s = STATIONS[stationIndex];
+    try {
+      audio.pause();
+      audio.removeAttribute('src');
+      audio.load();
+      audio.src = s.url;
+      audio.load();
+      await audio.play();
+      playerEl_playing(true);
+    } catch(err) {
+      console.error('Erro ao reproduzir a Rádio Aldeia:', err);
+      statusEl.textContent = 'Pausar NÃO FOI POSSÍVEL CONECTAR';
+      playerEl_playing(false);
+    }
+  }
+  function playerEl_playing(isPlaying){
+    if(isPlaying){
+      btnPlay.textContent='Pausar'; statusEl.textContent='Play TOCANDO AGORA';
+      if(!clockTimer) clockTimer = setInterval(tickClock, 1000);
+    } else {
+      btnPlay.textContent='Play';
+      if(clockTimer){ clearInterval(clockTimer); clockTimer=null; }
+    }
   }
 
   btnPlay.addEventListener('click', ()=>{
-  if(audio.paused){
-    const s = STATIONS[stationIndex];
-
-    if(s.url.includes('.m3u8')){
-      setStation(stationIndex, true);
-    } else {
+    if(audio.paused){
       if(!audio.src) setStation(stationIndex, false);
       tryPlay();
+    } else {
+      audio.pause();
+      statusEl.textContent = 'Pausar PAUSADO';
+      playerEl_playing(false);
     }
-  } else {
-    audio.pause();
-    playerEl.classList.remove('playing');
-    btnPlay.textContent = '▶';
-    statusEl.textContent = 'pausado';
-  }
-});
- 
-
-  audio.addEventListener('waiting', ()=>{ statusEl.textContent = 'carregando...'; });
-  audio.addEventListener('playing', ()=>{ statusEl.textContent = 'tocando agora'; playerEl.classList.add('playing'); btnPlay.textContent='⏸'; });
-  audio.addEventListener('error', ()=>{
-    statusEl.textContent = 'essa estação caiu — tenta outra da lista';
-    playerEl.classList.remove('playing');
-    btnPlay.textContent = '▶';
   });
+  btnPrev.addEventListener('click', ()=>{ const i=(stationIndex-1+STATIONS.length)%STATIONS.length; setStation(i, !audio.paused); });
+  btnNext.addEventListener('click', ()=>{ const i=(stationIndex+1)%STATIONS.length; setStation(i, !audio.paused); });
+  stationSelect.addEventListener('change', ()=>{ setStation(parseInt(stationSelect.value), !audio.paused); });
 
-  volumeSlider.addEventListener('input', ()=>{
-    audio.volume = volumeSlider.value/100;
-  });
+  audio.addEventListener('waiting', ()=>{ statusEl.textContent='Play CARREGANDO...'; });
+  audio.addEventListener('playing', ()=>{ playerEl_playing(true); });
+  audio.addEventListener('error', ()=>{ statusEl.textContent='Pausar ESTAÇÃO CAIU — tenta outra'; playerEl_playing(false); });
+
+  volumeSlider.addEventListener('input', ()=>{ audio.volume = volumeSlider.value/100; if(audio.volume>0 && muted){ muted=false; } });
   audio.volume = 0.7;
+  btnMute.addEventListener('click', ()=>{ muted=!muted; audio.muted = muted; });
 
-  stationsEl.addEventListener('click', (e)=>{
-    const btn = e.target.closest('.rp-station-btn');
-    if(!btn) return;
-    const wasPlaying = !audio.paused;
-    setStation(parseInt(btn.dataset.i), wasPlaying);
-  });
-
-  btnMin.addEventListener('click', (e)=>{
-    e.stopPropagation();
-    playerEl.classList.toggle('collapsed');
-    btnMin.textContent = playerEl.classList.contains('collapsed') ? '▢' : '–';
-  });
-  titlebar.addEventListener('click', (e)=>{
-    if(e.target===btnMin) return;
-    playerEl.classList.toggle('collapsed');
-    btnMin.textContent = playerEl.classList.contains('collapsed') ? '▢' : '–';
-  });
+  btnMin.addEventListener('click', (e)=>{ e.stopPropagation(); playerEl.classList.toggle('collapsed'); btnMin.textContent = playerEl.classList.contains('collapsed') ? 'Expandir' : '–'; });
+  titlebar.addEventListener('click', (e)=>{ if(e.target===btnMin) return; playerEl.classList.toggle('collapsed'); btnMin.textContent = playerEl.classList.contains('collapsed') ? 'Expandir' : '–'; });
 
   setStation(0, false);
 })();
